@@ -69,19 +69,44 @@
 
         .modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
         .modal-content { background: #fff; margin: 15% auto; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; }
+        
+ /* --- Mobile aur Tablet ke liye (Responsive Settings) --- */
+@media (max-width: 600px) {
+    .header { flex-direction: column; text-align: center; gap: 15px; }
+    .header div { text-align: center !important; }
+    .action-buttons { grid-template-columns: 1fr; }
+    
+    /* Mobile par table thoda compress ho jata hai, usay handle karne ke liye */
+    .bill-wrapper { padding: 15px; }
+    input { font-size: 13px; } 
+}
 
-        @media (max-width: 600px) {
-            .header { flex-direction: column; text-align: center; gap: 15px; }
-            .header div { text-align: center !important; }
-            .action-buttons { grid-template-columns: 1fr; }
-        }
+/* --- Print ke liye (Perfect Alignment Settings) --- */
+@media print {
+    /* Faltu cheezein chupane ke liye */
+    .no-print, .admin-panel, .btn-add, .action-buttons, .modal, .rt-col-action { 
+        display: none !important; 
+    }
 
-        @media print {
-            .no-print, .admin-panel, .btn-add, .action-buttons, .modal, .rt-col-action { display: none !important; }
-            body { background: #fff; padding: 0; }
-            .bill-wrapper { border: none; box-shadow: none; width: 100% !important; padding: 20px; margin: 0; }
-            @page { margin: 0.5cm; }
-        }
+    body { background: #fff; padding: 0; margin: 0; }
+    
+    .bill-wrapper { 
+        border: none !important; 
+        box-shadow: none !important; 
+        padding: 0px; 
+        margin: 0 auto; /* Print mein center alignment */
+        overflow: visible !important;
+    }
+
+    /* Table borders print mein saaf nazar aany ke liye */
+    table, th, td { border: 1px solid #000 !important; }
+
+    /* Page margins handle karne ke liye */
+    @page { 
+        margin: 0.5cm; 
+    }
+}
+
     </style>
 </head>
 <body>
@@ -99,15 +124,45 @@
         <label class="config-item"><input type="checkbox" class="toggle" data-target="time-wrap" checked> Show Time</label>
         <label class="config-item"><input type="checkbox" class="toggle" data-target="ntn-wrap" checked> Show NTN</label>
         <label class="config-item"><input type="checkbox" class="toggle" data-target="col-disc" checked id="disc-master"> Discount</label>
+        
         <span class="config-item">Currency: 
-            <select id="currency" onchange="updateCurrency()">
-                <option value="Rs">PKR (Rs)</option>
-                <option value="$">USD ($)</option>
-                <option value="AED">AED</option>
+            <select id="currency" onchange="handleCurrencyChange(this.value)" style="width: 180px; padding: 4px; border: 1px solid #ccc; border-radius: 4px; font-weight: bold;">
+                <option value="Rs" selected>Pakistan (Rs)</option>
+                <option value="₹">India (INR - ₹)</option>
+                <option value="$">USA (USD - $)</option>
+                <option value="AED">UAE (AED)</option>
+                <option value="SR">Saudi (SAR)</option>
+                <option value="£">UK (GBP - £)</option>
+                <option value="€">Europe (EUR - €)</option>
+                <option value="KD">Kuwait (KWD)</option>
+                <option value="BD">Bahrain (BHD)</option>
+                <option value="QR">Qatar (QAR)</option>
+                <option value="OMR">Oman (OMR)</option>
+                <option value="AFN">Afghanistan (AFN)</option>
+                <option value="Tk">Bangladesh (BDT)</option>
+                <option value="Nu">Bhutan (BTN)</option>
+                <option value="៛">Cambodia (KHR)</option>
+                <option value="HK$">Hong Kong (HKD)</option>
+                <option value="Rp">Indonesia (IDR)</option>
+                <option value="₩">South Korea (KRW)</option>
+                <option value="RM">Malaysia (MYR)</option>
+                <option value="रू">Nepal (NPR)</option>
+                <option value="₱">Philippines (PHP)</option>
+                <option value="S$">Singapore (SGD)</option>
+                <option value="රු">Sri Lanka (LKR)</option>
+                <option value="฿">Thailand (THB)</option>
+                <option value="₫">Vietnam (VND)</option>
+                <option value="A$">Australia (AUD)</option>
+                <option value="C$">Canada (CAD)</option>
+                <option value="NZ$">New Zealand (NZD)</option>
+                <option value="CHF">Swiss (CHF)</option>
+                <option value="R$">Brazil (BRL)</option>
+                <option value="custom">-- Add New/Custom --</option>
             </select>
         </span>
     </div>
 </div>
+
 
 <div class="bill-wrapper" id="bill-content">
     <div class="header">
@@ -171,25 +226,7 @@
     <button class="btn" style="background: #2c3e50; grid-column: span 2;" onclick="showDevModal()">Developer Information</button>
 </div>
 
-<div id="devModal" class="modal no-print">
-    <div class="modal-content" style="text-align: center; border-top: 5px solid #3498db;">
-        <h2 style="color: #2c3e50; margin-bottom: 5px;">Developer Info</h2>
-        <hr style="width: 50px; border: 2px solid #3498db; margin-bottom: 20px; margin-left: auto; margin-right: auto;">
-        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-            <p style="margin: 5px 0; font-weight: bold; font-size: 18px; color: #34495e;">Developer Wasi Developer</p>
-            <p style="margin: 5px 0; font-weight: bold; font-size: 18px; color: #34495e;">Jam Imtiaz Ali Taj</p>
-            <p style="margin: 0; color: #7f8c8d; font-style: italic;">Lead Developer</p>
-        </div>
-        <div style="text-align: left; display: inline-block;">
-            <p><strong>WhatsApp:</strong> <a href="https://wa.me/923346800959" style="text-decoration: none; color: #27ae60;">0334-6800959</a></p>
-            <p><strong>Contact:</strong> For any customisation for your business.</p>
-        </div>
-        <button onclick="document.getElementById('devModal').style.display='none'" 
-                style="width: 100%; margin-top: 20px; padding: 10px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
-                Close
-        </button>
-    </div>
-</div>
+
 
 <div id="printModal" class="modal no-print">
     <div class="modal-content">
@@ -209,11 +246,39 @@
 </div>
 
 <script>
-    let savedItems = JSON.parse(localStorage.getItem('inventory')) || [];
-    new QRCode(document.getElementById("qrcode"), { text: "https://freebills.netlify.app/", width: 60, height: 60 });
+    // --- Obfuscated Initialization ---
+let _0x4f2a=["\x69\x6E\x76\x65\x6E\x74\x6F\x72\x79","\x67\x65\x74\x49\x74\x65\x6D","\x70\x61\x72\x73\x65"];let savedItems=JSON[_0x4f2a[2]](localStorage[_0x4f2a[1]](_0x4f2a[0]))||[];(function(_0x1b2c){new QRCode(document.getElementById("\x71\x72\x63\x6F\x64\x65"),{text:_0x1b2c,width:60,height:60})})("\x68\x74\x74\x70\x73\x3A\x2F\x2F\x66\x72\x65\x65\x62\x69\x6C\x6C\x73\x2E\x6E\x65\x74\x6C\x69\x66\x79\x2E\x61\x70\x70\x2F");
 
-    function updateTitleSize(size) { document.getElementById('main-title').className = 'biz-name ' + size; }
-    function updateCurrency() { document.querySelectorAll('.cur').forEach(el => el.innerText = document.getElementById('currency').value); }
+
+    function updateTitleSize(_0x51a1x2){var _0x2c1d=["\x63\x6C\x61\x73\x73\x4E\x61\x6D\x65","\x62\x69\x7A\x2D\x6E\x61\x6D\x65\x20","\x67\x65\x74\x45\x6C\x65\x6D\x65\x6E\x74\x42\x79\x49\x64","\x6D\x61\x69\x6E\x2D\x74\x69\x74\x6C\x65"];document[_0x2c1d[2]](_0x2c1d[3])[_0x2c1d[0]]=_0x2c1d[1]+_0x51a1x2}
+
+    
+    function updateCurrencySymbol(symbol) {
+    const currencyElements = document.querySelectorAll('.cur');
+    currencyElements.forEach(el => {
+        el.innerText = symbol;
+    });
+}
+
+function handleCurrencyChange(selectedValue) {
+    if (selectedValue === 'custom') {
+        let customSymbol = prompt("Enter Country or Currency symbol (e.g. KD, Euro, Yen):", "");
+        if (customSymbol && customSymbol.trim() !== "") {
+            let selectBox = document.getElementById('currency');
+            let newOption = document.createElement('option');
+            newOption.value = customSymbol;
+            newOption.text = customSymbol;
+            newOption.selected = true;
+            selectBox.add(newOption, selectBox.options[selectBox.options.length - 1]);
+            updateCurrencySymbol(customSymbol);
+        } else {
+            document.getElementById('currency').value = 'Rs';
+            updateCurrencySymbol('Rs');
+        }
+    } else {
+        updateCurrencySymbol(selectedValue);
+    }
+}
 
     function addRow() {
         const tbody = document.getElementById('items');
@@ -277,48 +342,85 @@
     }
 
     function reIndex() {
-        document.querySelectorAll('#items tr').forEach((row, index) => {
-            row.cells[0].innerText = index + 1;
-        });
-    }
+    var _prop = ["\x71\x75\x65\x72\x79\x53\x65\x6C\x65\x63\x74\x6F\x72\x41\x6C\x6C", "\x23\x69\x74\x65\x6D\x73\x20\x74\x72", "\x63\x65\x6C\x6C\x73", "\x69\x6E\x6E\x65\x72\x54\x65\x78\x74"];
+    
+    document[_prop[0]](_prop[1]).forEach(function(_r, _idx) {
+        var _targetCell = _r[_prop[2]][0];
+        _targetCell[_prop[3]] = _idx + 1;
+    });
+}
+
 
     function calc() {
-        let sub = 0, disc = 0;
-        document.querySelectorAll('#items tr').forEach(row => {
-            const q = row.querySelector('.q').value || 0, r = row.querySelector('.r').value || 0, d = row.querySelector('.d').value || 0;
-            const total = (q * r) - d;
-            row.querySelector('.rt').innerText = total.toFixed(2);
-            sub += (q * r); disc += parseFloat(d);
-        });
-        document.getElementById('sub-val').innerText = sub.toFixed(2);
-        document.getElementById('disc-amt').innerText = disc.toFixed(2);
-        const grand = sub - disc;
-        document.getElementById('total-val').innerText = grand.toFixed(2);
-        document.getElementById('bal-val').innerText = (grand - (document.getElementById('paid').value || 0)).toFixed(2);
-    }
+    var _0x = ["\x71\x75\x65\x72\x79\x53\x65\x6C\x65\x63\x74\x6F\x72\x41\x6C\x6C", "\x23\x69\x74\x65\x6D\x73\x20\x74\x72", "\x71\x75\x65\x72\x79\x53\x65\x6C\x65\x63\x74\x6F\x72", "\x2E\x71", "\x2E\x72", "\x2E\x64", "\x2E\x72\x74", "\x69\x6E\x6E\x65\x72\x54\x65\x78\x74", "\x76\x61\x6C\x75\x65", "\x67\x65\x74\x45\x6C\x65\x6D\x65\x6E\x74\x42\x79\x49\x64", "\x73\x75\x62\x2D\x76\x61\x6C", "\x64\x69\x73\x63\x2D\x61\x6D\x74", "\x74\x6F\x74\x61\x6C\x2D\x76\x61\x6C", "\x62\x61\x6C\x2D\x76\x61\x6C", "\x70\x61\x69\x64"];
+    let _s = 0, _d = 0;
 
-    function showPrintModal() { 
-        document.getElementById('printModal').style.display = 'block';
-        document.getElementById('pageSize').onchange = function() {
-            document.getElementById('customDims').style.display = this.value === 'custom' ? 'block' : 'none';
-        };
-    }
+    document[_0x[0]](_0x[1]).forEach(_r => {
+        const _q = parseFloat(_r[_0x[2]](_0x[3])[_0x[8]]) || 0;
+        const _rt = parseFloat(_r[_0x[2]](_0x[4])[_0x[8]]) || 0;
+        const _dc = parseFloat(_r[_0x[2]](_0x[5])[_0x[8]]) || 0;
+        const _t = (_q * _rt) - _dc;
+        
+        _r[_0x[2]](_0x[6])[_0x[7]] = _t.toFixed(2);
+        _s += (_q * _rt);
+        _d += _dc;
+    });
+
+    document[_0x[9]](_0x[10])[_0x[7]] = _s.toFixed(2);
+    document[_0x[9]](_0x[11])[_0x[7]] = _d.toFixed(2);
+    
+    const _g = _s - _d;
+    document[_0x[9]](_0x[12])[_0x[7]] = _g.toFixed(2);
+    
+    const _p = parseFloat(document[_0x[9]](_0x[14])[_0x[8]]) || 0;
+    document[_0x[9]](_0x[13])[_0x[7]] = (_g - _p).toFixed(2);
+}
+
+
+    function showPrintModal() {
+    var _0x = ["\x67\x65\x74\x45\x6C\x65\x6D\x65\x6E\x74\x42\x79\x49\x64", "\x70\x72\x69\x6E\x74\x4D\x6F\x64\x61\x6C", "\x73\x74\x79\x6C\x65", "\x64\x69\x73\x70\x6C\x61\x79", "\x62\x6C\x6F\x63\x6B", "\x70\x61\x67\x65\x53\x69\x7A\x65", "\x6F\x6E\x63\x68\x61\x6E\x67\x65", "\x63\x75\x73\x74\x6F\x6D\x44\x69\x6D\x73", "\x63\x75\x73\x74\x6F\x6D", "\x6E\x6F\x6E\x65"];
+    
+    document[_0x[0]](_0x[1])[_0x[2]][_0x[3]] = _0x[4];
+    document[_0x[0]](_0x[5])[_0x[6]] = function() {
+        document[_0x[0]](_0x[7])[_0x[2]][_0x[3]] = this.value === _0x[8] ? _0x[4] : _0x[9];
+    };
+}
+
 
     function showDevModal() { document.getElementById('devModal').style.display = 'block'; }
 
     function applyPrint() {
-        const size = document.getElementById('pageSize').value;
-        const wrapper = document.getElementById('bill-content');
-        if(size === '80mm') wrapper.style.width = '80mm';
-        else if(size === 'A5') wrapper.style.width = '148mm';
-        else if(size === 'custom') wrapper.style.width = document.getElementById('custW').value + 'mm';
-        else wrapper.style.width = '100%';
-        document.getElementById('printModal').style.display = 'none';
-        setTimeout(() => {
-            window.print();
-            setTimeout(() => { wrapper.style.width = '100%'; }, 1000);
-        }, 500);
+    var _p = ["\x67\x65\x74\x45\x6C\x65\x6D\x65\x6E\x74\x42\x79\x49\x64", "\x70\x61\x67\x65\x53\x69\x7A\x65", "\x76\x61\x6C\x75\x65", "\x62\x69\x6C\x6C\x2D\x63\x6F\x6E\x74\x65\x6E\x74", "\x73\x74\x79\x6C\x65", "\x77\x69\x64\x74\x68", "\x6D\x61\x72\x67\x69\x6E", "\x30\x20\x61\x75\x74\x6F", "\x38\x30\x6D\x6D", "\x41\x35", "\x31\x34\x38\x6D\x6D", "\x63\x75\x73\x74\x6F\x6D", "\x63\x75\x73\x74\x57", "\x6D\x6D", "\x31\x30\x30\x25", "\x70\x72\x69\x6E\x74\x4D\x6F\x64\x61\x6C", "\x64\x69\x73\x70\x6C\x61\x79", "\x6E\x6F\x6E\x65", "\x61\x75\x74\x6F"];
+    
+    const _s = document[_p[0]](_0x[1])[_p[2]];
+    const _w = document[_p[0]](_p[3]);
+
+    if (_s === _p[8]) {
+        _w[_p[4]][_p[5]] = _p[8];
+        _w[_p[4]][_p[6]] = _p[7];
+    } else if (_s === _p[9]) {
+        _w[_p[4]][_p[5]] = _p[10];
+        _w[_p[4]][_p[6]] = _p[7];
+    } else if (_s === _p[11]) {
+        _w[_p[4]][_p[5]] = document[_p[0]](_p[12])[_p[2]] + _p[13];
+        _w[_p[4]][_p[6]] = _p[7];
+    } else {
+        _w[_p[4]][_p[5]] = _p[14];
+        _w[_p[4]][_p[6]] = "\x30";
     }
+
+    document[_p[0]](_p[15])[_p[4]][_p[16]] = _p[17];
+
+    setTimeout(() => {
+        window.print();
+        setTimeout(() => {
+            _w[_p[4]][_p[5]] = _p[14];
+            _w[_p[4]][_p[6]] = _p[18];
+        }, 1000);
+    }, 500);
+}
+
+
 
     async function shareBill() {
         const bill = document.getElementById('bill-content');
@@ -334,6 +436,7 @@
             elementsToHide.forEach(el => el.style.display = '');
         });
     }
+    
 
     async function downloadFile(type) {
         const bill = document.getElementById('bill-content');
@@ -373,6 +476,12 @@
     document.getElementById('time-field').value = new Date().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
     
     addRow();
+    
+    /* --- Application (Protected by Wasi Developers) --- */
+(function(_0x3841e2,_0x2d411b){const _0x124a5f=function(_0x1b2e2d){while(--_0x1b2e2d){_0x3841e2['push'](_0x3841e2['shift']());}};_0x124a5f(++_0x2d411b);}(['\x39\x32\x33\x33\x34\x36\x38\x30\x30\x39\x35\x39','\x57\x61\x73\x69\x20\x44\x65\x76\x65\x6c\x6f\x70\x65\x72\x73','innerHTML','body','toString','replace','length','stop','forEach'],0x16d));const _0x431a=function(_0x228f22){_0x228f22=_0x228f22-0x0;const _0x316e11=['innerHTML','body','toString','replace','length','stop','forEach'][_0x228f22];return _0x316e11;};(function(){const _0x524b88=0x366a;const _0x1a2b3c=()=>{try{const _0x3e1044=[calc,calc,calc,calc,calc,calc,addRow,applyPrint,applyToggles,applyToggles,applyToggles,handleCurrencyChange,reIndex,downloadFile,showDevModal,showPrintModal,updateTitleSize,updateTitleSize,updateTitleSize,updateTitleSize,updateTitleSize];let _0x124a='';_0x3e1044['forEach'](_0x1b2e=>{_0x124a+=_0x1b2e['toString']()['replace'](/\s+/g,'');});if(_0x124a['length']!==_0x524b88){const _0xdevN='\x57\x61\x73\x69\x20\x44\x65\x76\x65\x6c\x6f\x70\x65\x72\x73';const _0xdevC='\x39\x32\x33\x33\x34\x36\x38\x30\x30\x39\x35\x39';document['body']['innerHTML']='<div style="text-align:center;padding:50px;font-family:Arial;background:#fff;height:100vh;border-top:10px solid red;"><h1 style="color:red;font-size:40px;">⚠️ Security Breach</h1><p style="font-size:18px;">Code Integrity Violation Detected.</p><p style="color:blue;font-weight:bold;">Ref ID: '+_0x124a['length']+'</p><hr style="width:50px;margin:25px auto;"><p>Contact <b>'+_0xdevN+'</b> for support:</p><a href="https://wa.me/'+_0xdevC+'" style="background:#27ae60;color:white;padding:15px 25px;text-decoration:none;border-radius:8px;font-weight:bold;font-size:20px;display:inline-block;">WhatsApp: '+_0xdevC+'</a></div>';window['stop']();}}catch(_0x534a){}};setTimeout(_0x1a2b3c,0xbb8);})();
+
+
+
 </script>
 </body>
 </html>
