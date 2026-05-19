@@ -104,6 +104,13 @@
             @page { margin: 0.5cm; }
         }
     </style>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date())
+  gtag('config', 'G-MM1128NLL1');
+</script>
 </head>
 <body>
 
@@ -381,6 +388,10 @@
     function showDevModal() { document.getElementById('devModal').style.display = 'block'; }
 
     function applyPrint() {
+        window["\x67\x74\x61\x67"]("\x65\x76\x65\x6e\x74", "\x62\x69\x6c\x6c\x5f\x67\x65\x6e\x65\x72\x61\x74\x65\x64", {
+  '\x65\x76\x65\x6e\x74\x5f\x63\x61\x74\x65\x67\x6f\x72\x79': "\x45\x6e\x67\x61\x67\x65\x6d\x65\x6e\x74",
+  '\x65\x76\x65\x6e\x74\x5f\x6c\x61\x62\x65\x6c': "\x49\x6e\x76\x6f\x69\x63\x65\x5f\x50\x72\x69\x6e\x74\x65\x64"
+}); 
         var _p = ["\x67\x65\x74\x45\x6C\x65\x6D\x65\x6E\x74\x42\x79\x49\x64", "\x70\x61\x67\x65\x53\x69\x7A\x65", "\x76\x61\x6C\x75\x65", "\x62\x69\x6C\x6C\x2D\x63\x6F\x6E\x74\x65\x6E\x74", "\x73\x74\x79\x6C\x65", "\x77\x69\x64\x74\x68", "\x6D\x61\x72\x67\x69\x6E", "\x30\x20\x61\x75\x74\x6F", "\x38\x30\x6D\x6D", "\x41\x35", "\x31\x34\x38\x6D\x6D", "\x63\x75\x73\x74\x6F\x6D", "\x63\x75\x73\x74\x57", "\x6D\x6D", "\x31\x30\x30\x25", "\x70\x72\x69\x6E\x74\x4D\x6F\x64\x61\x6C", "\x64\x69\x73\x70\x6C\x61\x79", "\x6E\x6F\x6E\x65", "\x61\x75\x74\x6F"];
         const _s = document[_p[0]]('pageSize')[_p[2]]; const _w = document[_p[0]](_p[3]);
         if (_s === _p[8]) { _w[_p[4]][_p[5]] = _p[8]; _w[_p[4]][_p[6]] = _p[7]; } 
@@ -390,7 +401,16 @@
         document[_p[0]](_p[15])[_p[4]][_p[16]] = _p[17];
         setTimeout(() => { window.print(); setTimeout(() => { _w[_p[4]][_p[5]] = _p[14]; _w[_p[4]][_p[6]] = _p[18]; }, 1000); }, 500);
     }
-        async function shareBill(){const _0x4b1e=document['getElementById']('bill-content');const _0x1f3c=document['querySelectorAll']('.no-print,\x20.rt-col-action,\x20.editable-text-container,\x20.editable-input-container');_0x1f3c['forEach'](_0x2a5b=>{if(_0x2a5b['classList']['contains']('editable-text-container')||_0x2a5b['classList']['contains']('editable-input-container')){_0x2a5b['style']['paddingRight']='0';_0x2a5b['style']['setProperty']('--show-pencil','none');}else{_0x2a5b['style']['display']='none';}});const _0x3d4f=await html2canvas(_0x4b1e,{scale:3,useCORS:!![],logging:![]});_0x3d4f['toBlob'](async(_0x5e12)=>{const _0x12a5=new File([_0x5e12],'Invoice.jpg',{type:'image/jpeg'});if(navigator['canShare']&&navigator['canShare']({files:[_0x12a5]})){await navigator['share']({files:[_0x12a5],title:'Bill'});}else{alert('Share\x20not\x20supported.\x20Download\x20JPG\x20instead.');}_0x1f3c['forEach'](_0x2a5b=>{if(_0x2a5b['classList']['contains']('editable-text-container')||_0x2a5b['classList']['contains']('editable-input-container')){_0x2a5b['style']['paddingRight']='';_0x2a5b['style']['removeProperty']('--show-pencil');}else{_0x2a5b['style']['display']='';}});});}async function downloadFile(_0x321a){const _0x4b1e=document['getElementById']('bill-content');const _0x1f3c=document['querySelectorAll']('.no-print,\x20.rt-col-action,\x20.editable-text-container,\x20.editable-input-container');_0x1f3c['forEach'](_0x2a5b=>{if(_0x2a5b['classList']['contains']('editable-text-container')||_0x2a5b['classList']['contains']('editable-input-container')){_0x2a5b['style']['paddingRight']='0';_0x2a5b['style']['setProperty']('--show-pencil','none');}else{_0x2a5b['style']['display']='none';}});html2canvas(_0x4b1e,{scale:3,useCORS:!![]})['then'](_0x3d4f=>{if(_0x321a==='jpg'){const _0x14b2=document['createElement']('a');_0x14b2['download']='Bill.jpg';_0x14b2['href']=_0x3d4f['toDataURL']('image/jpeg');_0x14b2['click']();}else{const{jsPDF}=window['jspdf'];const _0x531a=new jsPDF('p','mm','a4');_0x531a['addImage'](_0x3d4f['toDataURL']('image/jpeg'),'JPEG',0,0,210,(_0x3d4f['height']*210)/_0x3d4f['width']);_0x531a['save']('Invoice.pdf');}_0x1f3c['forEach'](_0x2a5b=>{if(_0x2a5b['classList']['contains']('editable-text-container')||_0x2a5b['classList']['contains']('editable-input-container')){_0x2a5b['style']['paddingRight']='';_0x2a5b['style']['removeProperty']('--show-pencil');}else{_0x2a5b['style']['display']='';}});});}
+        async function shareBill(){window["\x67\x74\x61\x67"]("\x65\x76\x65\x6e\x74", "\x62\x69\x6c\x6c\x5f\x73\x68\x61\x72\x65\x64", {
+  '\x65\x76\x65\x6e\x74\x5f\x63\x61\x74\x65\x67\x6f\x72\x79': "\x45\x6e\x67\x61\x67\x65\x6d\x65\x6e\x74",
+  '\x65\x76\x65\x6e\x74\x5f\x6c\x61\x62\x65\x6c': "\x49\x6e\x76\x6f\x69\x63\x65\x5f\x53\x68\x61\x72\x65\x64"
+});
+                                   const _0x4b1e=document['getElementById']('bill-content');const _0x1f3c=document['querySelectorAll']('.no-print,\x20.rt-col-action,\x20.editable-text-container,\x20.editable-input-container');_0x1f3c['forEach'](_0x2a5b=>{if(_0x2a5b['classList']['contains']('editable-text-container')||_0x2a5b['classList']['contains']('editable-input-container')){_0x2a5b['style']['paddingRight']='0';_0x2a5b['style']['setProperty']('--show-pencil','none');}else{_0x2a5b['style']['display']='none';}});const _0x3d4f=await html2canvas(_0x4b1e,{scale:3,useCORS:!![],logging:![]});_0x3d4f['toBlob'](async(_0x5e12)=>{const _0x12a5=new File([_0x5e12],'Invoice.jpg',{type:'image/jpeg'});if(navigator['canShare']&&navigator['canShare']({files:[_0x12a5]})){await navigator['share']({files:[_0x12a5],title:'Bill'});}else{alert('Share\x20not\x20supported.\x20Download\x20JPG\x20instead.');}_0x1f3c['forEach'](_0x2a5b=>{if(_0x2a5b['classList']['contains']('editable-text-container')||_0x2a5b['classList']['contains']('editable-input-container')){_0x2a5b['style']['paddingRight']='';_0x2a5b['style']['removeProperty']('--show-pencil');}else{_0x2a5b['style']['display']='';}});});}
+    async function downloadFile(_0x321a){window["\x67\x74\x61\x67"]("\x65\x76\x65\x6e\x74", "\x62\x69\x6c\x6c\x5f\x64\x6f\x77\x6e\x6c\x6f\x61\x64\x65\x64", {
+        '\x65\x76\x65\x6e\x74\x5f\x63\x61\x74\x65\x67\x6f\x72\x79': "\x45\x6e\x67\x61\x67\x65\x6d\x65\x6e\x74",
+        '\x65\x76\x65\x6e\x74\x5f\x6c\x61\x62\x65\x6c': "\x49\x6e\x76\x6f\x69\x63\x65\x5f\x44\x6f\x77\x6e\x6c\x6f\x61\x64\x65\x64"
+    });
+                                         const _0x4b1e=document['getElementById']('bill-content');const _0x1f3c=document['querySelectorAll']('.no-print,\x20.rt-col-action,\x20.editable-text-container,\x20.editable-input-container');_0x1f3c['forEach'](_0x2a5b=>{if(_0x2a5b['classList']['contains']('editable-text-container')||_0x2a5b['classList']['contains']('editable-input-container')){_0x2a5b['style']['paddingRight']='0';_0x2a5b['style']['setProperty']('--show-pencil','none');}else{_0x2a5b['style']['display']='none';}});html2canvas(_0x4b1e,{scale:3,useCORS:!![]})['then'](_0x3d4f=>{if(_0x321a==='jpg'){const _0x14b2=document['createElement']('a');_0x14b2['download']='Bill.jpg';_0x14b2['href']=_0x3d4f['toDataURL']('image/jpeg');_0x14b2['click']();}else{const{jsPDF}=window['jspdf'];const _0x531a=new jsPDF('p','mm','a4');_0x531a['addImage'](_0x3d4f['toDataURL']('image/jpeg'),'JPEG',0,0,210,(_0x3d4f['height']*210)/_0x3d4f['width']);_0x531a['save']('Invoice.pdf');}_0x1f3c['forEach'](_0x2a5b=>{if(_0x2a5b['classList']['contains']('editable-text-container')||_0x2a5b['classList']['contains']('editable-input-container')){_0x2a5b['style']['paddingRight']='';_0x2a5b['style']['removeProperty']('--show-pencil');}else{_0x2a5b['style']['display']='';}});});}
 
 
 
