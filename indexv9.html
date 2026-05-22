@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Universal Bill Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <style>
+        :root { --primary: #2c3e50; --bg: #f4f7f6; --accent: #27ae60; --share: #3498db; --print: #8e44ad; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); margin: 0; padding: 5px; }
+        
+        .admin-panel { 
+            max-width: 850px; margin: 0 auto 15px; background: #fff; padding: 15px; 
+            border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 5px solid var(--primary);
+        }
+        .config-grid { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
+        .config-item { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: bold; }
+
+        .bill-wrapper { 
+            max-width: 800px; margin: auto; background: #fff; padding: 30px; 
+            border: 1px solid #ddd; min-height: auto; position: relative;
+            overflow: visible; box-sizing: border-box;
+        }
+        
+        .header { display: flex; justify-content: space-between; border-bottom: 3px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
+        
+        .title-normal { font-size: 22px; }
+        .title-medium { font-size: 28px; }
+        .title-large { font-size: 35px; }
+        .biz-name { font-weight: bold; color: var(--primary); outline: none; word-break: break-word; }
+        
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; border: 1px solid #333; font-size: 14px; }
+        th { background: #f8f9fa; border: 1px solid #333; padding: 10px; font-size: 12px; }
+        td { border: 1px solid #333; padding: 8px 5px; position: relative; vertical-align: middle; line-height: 1.4; }
+        
+        .delete-btn { color: red; background: none; border: none !important; cursor: pointer; font-weight: bold; font-size: 14px; }
+
+        input { 
+            border: none; width: 100%; outline: none; background: transparent; 
+            font-size: 14px; padding: 0 2px 2px 2px; 
+            height: 30px; line-height: 30px; 
+            display: inline-block; vertical-align: middle;
+        }
+        input:focus { background: #fffde7; }
+
+        /* --- Pencil Icons Styling --- */
+        .editable-text-container { position: relative; display: inline-block; padding-right: 18px; }
+        .editable-text-container::after { 
+            content: "✏️"; position: absolute; right: 0; top: 50%; transform: translateY(-50%); 
+            font-size: 11px; opacity: 0.6; pointer-events: none; 
+            display: var(--show-pencil, block);
+        }
+        .editable-input-container { position: relative; display: block; width: 100%; }
+        .editable-input-container::after { 
+            content: "✏️"; position: absolute; right: 5px; top: 50%; transform: translateY(-50%); 
+            font-size: 11px; opacity: 0.5; pointer-events: none; 
+            display: var(--show-pencil, block);
+        }
+
+        .item-input { padding-right: 20px !important; box-sizing: border-box; }
+
+        .suggestion-container { position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #ccc; box-shadow: 0 4px 8px rgba(0,0,0,0.2); z-index: 9999; display: none; max-height: 150px; overflow-y: auto; }
+        .suggestion-item { padding: 8px 10px; cursor: pointer; border-bottom: 1px solid #eee; font-size: 13px; color: #333; text-align: left; }
+        .suggestion-item:hover { background: #f0f0f0; }
+
+        .action-buttons { max-width: 800px; margin: 20px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .btn { padding: 12px 5px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; color: white; text-align: center; font-size: 12px; }
+        .btn-pdf { background: #e74c3c; }
+        .btn-jpg { background: var(--accent); }
+        .btn-share { background: var(--share); }
+        .btn-print { background: var(--print); }
+        .btn-add { background: var(--primary); color: white; margin-top: 10px; padding: 10px 15px; border-radius: 4px; border: none; cursor: pointer; width: 100%; }
+
+        .summary-box { display: flex; justify-content: flex-end; margin-top: 15px; padding-bottom: 20px; }
+        .sum-table { width: 100%; max-width: 300px; border: none; }
+        .sum-table td { border: none !important; padding: 6px 10px; text-align: right; white-space: nowrap; line-height: 1.5; }
+
+        .footer-area { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px; flex-wrap: wrap; gap: 20px; padding-bottom: 20px; }
+        #qrcode { margin-bottom: 5px; }
+        .permanent-branding { font-size: 10px; color: #555; text-align: left; margin-top: 5px; font-weight: bold; }
+
+        .modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+        .modal-content { background: #fff; margin: 15% auto; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; }
+        
+        @media (max-width: 600px) {
+            .header { flex-direction: column; text-align: center; gap: 15px; }
+            .header div { text-align: center !important; }
+            .action-buttons { grid-template-columns: 1fr; }
+            .bill-wrapper { padding: 15px; }
+            input { font-size: 13px; } 
+        }
+
+        /* --- Print Control Layout --- */
+        @media print {
+            .no-print, .admin-panel, .btn-add, .action-buttons, .modal, .rt-col-action { display: none !important; }
+            body { background: #fff; padding: 0; margin: 0; }
+            .bill-wrapper { border: none !important; box-shadow: none !important; padding: 0px; margin: 0 auto; overflow: visible !important; }
+            table, th, td { border: 1px solid #000 !important; }
+            .editable-text-container::after, .editable-input-container::after { display: none !important; }
+            .editable-text-container { padding-right: 0 !important; }
+            @page { margin: 0.5cm; }
+        }
+    </style>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MM1128NLL1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-MM1128NLL1');
+    </script>
+</head>
+<body>
+
+<div class="admin-panel no-print">
+    <h3 style="margin:0 0 10px 0; color: var(--primary);">Advanced Settings</h3>
+    <div class="config-grid">
+        <span class="config-item">Title Size:</span>
+        <label><input type="radio" name="tsize" value="title-normal" checked onclick="updateTitleSize(this.value)"> Normal</label>
+        <label><input type="radio" name="tsize" value="title-medium" onclick="updateTitleSize(this.value)"> Medium</label>
+        <label><input type="radio" name="tsize" value="title-large" onclick="updateTitleSize(this.value)"> Large</label>
+    </div>
+    <div class="config-grid">
+        <label class="config-item"><input type="checkbox" class="toggle" data-target="date-wrap" checked> Show Date</label>
+        <label class="config-item"><input type="checkbox" class="toggle" data-target="time-wrap" checked> Show Time</label>
+        <label class="config-item"><input type="checkbox" class="toggle" data-target="ntn-wrap" checked> Show NTN</label>
+        <label class="config-item"><input type="checkbox" class="toggle" data-target="col-disc" checked id="disc-master"> Discount</label>
+        
+        <span class="config-item">Currency: 
+            <select id="currency" onchange="handleCurrencyChange(this.value)" style="width: 180px; padding: 4px; border: 1px solid #ccc; border-radius: 4px; font-weight: bold;">
+                <option value="Rs" selected>Pakistan (Rs)</option>
+                <option value="₹">India (INR - ₹)</option>
+                <option value="$">USA (USD - $)</option>
+                <option value="AED">UAE (AED)</option>
+                <option value="SR">Saudi (SAR)</option>
+                <option value="£">UK (GBP - £)</option>
+                <option value="€">Europe (EUR - €)</option>
+                <option value="KD">Kuwait (KWD)</option>
+                <option value="BD">Bahrain (BHD)</option>
+                <option value="QR">Qatar (QAR)</option>
+                <option value="OMR">Oman (OMR)</option>
+                <option value="AFN">Afghanistan (AFN)</option>
+                <option value="Tk">Bangladesh (BDT)</option>
+                <option value="Nu">Bhutan (BTN)</option>
+                <option value="៛">Cambodia (KHR)</option>
+                <option value="HK$">Hong Kong (HKD)</option>
+                <option value="Rp">Indonesia (IDR)</option>
+                <option value="₩">South Korea (KRW)</option>
+                <option value="RM">Malaysia (MYR)</option>
+                <option value="रू">Nepal (NPR)</option>
+                <option value="₱">Philippines (PHP)</option>
+                <option value="S$">Singapore (SGD)</option>
+                <option value="රු">Sri Lanka (LKR)</option>
+                <option value="฿">Thailand (THB)</option>
+                <option value="₫">Vietnam (VND)</option>
+                <option value="A$">Australia (AUD)</option>
+                <option value="C$">Canada (CAD)</option>
+                <option value="NZ$">New Zealand (NZD)</option>
+                <option value="CHF">Swiss (CHF)</option>
+                <option value="R$">Brazil (BRL)</option>
+                <option value="custom">-- Add New/Custom --</option>
+            </select>
+        </span>
+    </div>
+</div>
+
+<div class="bill-wrapper" id="bill-content">
+    <div class="header">
+        <div>
+            <div class="editable-text-container"><div id="main-title" class="biz-name title-bold" contenteditable="true">ABC Mobile Accessories</div></div><br>
+            <div style="font-size: 14px; margin-top: 5px;">Address: <div class="editable-text-container"><div contenteditable="true" style="display:inline-block; font-weight: normal;">ABC Chowk, Sadiq Abad</div></div></div>
+            <div id="wasi-contact" style="font-size: 14px; font-weight: normal; margin-top: 3px;"></div>
+
+            <div class="ntn-wrap" style="font-size: 14px; font-weight: normal; margin-top: 5px;">NTN: <div class="editable-text-container"><span contenteditable="true">1234567-8</span></div></div>
+            
+            <div class="customer-info-wrap" style="margin-top: 15px; font-size: 14px; text-align: left; border-top: 1px dashed #eee; padding-top: 10px;">
+                <div style="margin-bottom: 5px;">Customer: <div class="editable-text-container" style="font-weight: bold;"><span contenteditable="true" style="min-width: 130px; display: inline-block; border-bottom: 1px dotted #ccc;">Counter Sale</span></div></div>
+                <div style="font-size: 14px; margin-top: 5px;">Address: <div class="editable-text-container"><div contenteditable="true" style="display:inline-block; font-weight: normal;">#</div></div></div>
+            </div>
+        </div>
+        <div style="text-align: right; display: flex; flex-direction: column; justify-content: dashed;">
+            <h1 style="margin:0; color: #2c3e50; font-size: 28px;">INVOICE</h1>
+            <div class="date-wrap" style="margin-top: 5px;">Date: <div class="editable-text-container" style="padding-right:15px;"><input type="date" id="date-field" style="width:115px; text-align:right; font-weight: normal; height:30px; line-height:30px; display:inline-block; vertical-align:middle;"></div></div>
+            <div class="time-wrap">Time: <div class="editable-text-container" style="padding-right:15px;"><input type="time" id="time-field" style="width:115px; text-align:right; font-weight: normal; height:30px; line-height:30px; display:inline-block; vertical-align:middle;"></div></div>
+            <div style="display: inline-flex; align-items: center; justify-content: flex-end; gap: 5px; font-family: inherit; margin: 5px 0;">
+                <span>Bill No:</span> 
+                <div class="editable-text-container" style="display: inline-block; padding-right: 18px;">
+                    <div contenteditable="true" style="display: inline-block; font-weight: bold; outline: none; min-width: 30px; text-align: left; vertical-align: middle;">101</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th width="5%">#</th>
+                <th width="45%">Description</th>
+                <th width="10%">Qty</th>
+                <th width="12%">Rate</th>
+                <th width="10%" class="col-disc">Disc</th>
+                <th width="13%">Total</th>
+                <th class="no-print rt-col-action" width="5%"></th>
+            </tr>
+        </thead>
+        <tbody id="items"></tbody>
+    </table>
+    
+    <button class="btn-add no-print" onclick="addRow()">+ Add New Item</button>
+    
+    <div class="summary-box">
+        <table class="sum-table">
+            <tr><td>Sub Total:</td><td><span class="cur">Rs</span> <span id="sub-val">0.00</span></td></tr>
+            <tr class="col-disc" style="color: green;"><td>Discount:</td><td>- <span id="disc-amt">0.00</span></td></tr>
+            <tr style="font-weight:bold; font-size:1.25em; border-top: 2px solid #333;"><td>Grand Total:</td><td><span class="cur">Rs</span> <span id="total-val">0.00</span></td></tr>
+            <tr><td>Received:</td><td><div class="editable-text-container" style="padding-right:15px;"><input type="number" id="paid" value="0" oninput="calc()" style="text-align:right; font-weight:bold; width:95px; height:30px; line-height:30px; padding-bottom:2px; display:inline-block; vertical-align:middle;" onclick="this.select()"></div></td></tr>
+            <tr style="color:red; font-weight:bold;"><td>Pending Balance:</td><td><span class="cur">Rs</span> <span id="bal-val">0.00</span></td></tr>
+        </table>
+    </div>
+
+    <div class="footer-area">
+        <div class="qr-section">
+            <div id="qrcode"></div>
+            <div class="permanent-branding">https://freebills.netlify.app/</div>
+        </div>
+        <div style="text-align:center;">
+            <div style="width: 150px; border-top: 1.2px solid #333; padding-top: 8px; font-weight: bold; margin-top:30px;">Signature</div>
+        </div>
+    </div>
+</div>
+
+<div class="action-buttons no-print">
+    <button class="btn btn-pdf" onclick="downloadFile('pdf')">Save PDF</button>
+    <button class="btn btn-jpg" onclick="downloadFile('jpg')">Save JPG</button>
+    <button class="btn btn-share" onclick="shareBill()">Share Bill</button>
+    <button class="btn btn-print" onclick="showPrintModal()">Print Options</button>
+    <button class="btn" style="background: #2c3e50; grid-column: span 2;" onclick="showDevModal()">Developer Information</button>
+</div>
+
+<div id="printModal" class="modal no-print">
+    <div class="modal-content">
+        <h4>Select Paper Size</h4>
+        <select id="pageSize" style="width:100%; padding:10px; margin-bottom:10px;">
+            <option value="A4">Standard A4</option>
+            <option value="A5">Small A5</option>
+            <option value="80mm">Thermal Receipt (80mm)</option>
+            <option value="custom">Custom Size</option>
+        </select>
+        <div id="customDims" style="display:none; margin-bottom:10px;">
+            Width (mm): <input type="number" id="custW" value="210" style="border:1px solid #ccc; width:60px;">
+        </div>
+        <button class="btn btn-print" onclick="applyPrint()" style="width:100%;">Print Now</button>
+        <button onclick="document.getElementById('printModal').style.display='none'" style="width:100%; margin-top:10px; background:none; border:none; color:red; cursor:pointer;">Cancel</button>
+    </div>
+</div>
+
+<div id="devModal" class="modal no-print">
+    <div class="modal-content" style="text-align: center;">
+        <h3 style="color: var(--primary); margin-bottom: 5px;">Wasi Developers</h3>
+        <p style="font-size: 14px; color: #555;">Professional Software & Web Engineering Solutions</p>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+        <p style="font-weight: bold;">Contact for Custom Projects:</p>
+        <a id="modal-wa-link" href="#" style="background:#27ae60; color:white; padding:12px 20px; text-decoration:none; border-radius:6px; font-weight:bold; display:inline-block; margin-top:5px;">
+            WhatsApp Support
+        </a>
+        <button onclick="document.getElementById('devModal').style.display='none'" style="width:100%; margin-top:20px; background:none; border:none; color:#777; cursor:pointer; font-weight:bold;">Close</button>
+    </div>
+</div>
+
+<script>
+    // --- Initializations ---
+    let savedItems = JSON.parse(localStorage.getItem("inventory")) || [];
+    
+    // QR Code Generator (Original URL)
+    (function(siteUrl){
+        new QRCode(document.getElementById("qrcode"), { text: siteUrl, width: 60, height: 60 });
+    })("https://freebills.netlify.app/");
+
+    // Business Title Size Changer
+    function updateTitleSize(sizeValue){
+        document.getElementById("main-title").className = "biz-name " + sizeValue;
+    }
+    
+    // Currency Symbol Updater
+    function updateCurrencySymbol(symbol) {
+        document.querySelectorAll('.cur').forEach(el => { el.innerText = symbol; });
+    }
+
+    // Currency Dropdown Change Handler
+    function handleCurrencyChange(selectedValue) {
+        if (selectedValue === 'custom') {
+            let customSymbol = prompt("Enter Country or Currency symbol:", "");
+            if (customSymbol && customSymbol.trim() !== "") {
+                let selectBox = document.getElementById('currency');
+                let newOption = document.createElement('option');
+                newOption.value = customSymbol; newOption.text = customSymbol; newOption.selected = true;
+                selectBox.add(newOption, selectBox.options[selectBox.options.length - 1]);
+                updateCurrencySymbol(customSymbol);
+            } else {
+                document.getElementById('currency').value = 'Rs';
+                updateCurrencySymbol('Rs');
+            }
+        } else { updateCurrencySymbol(selectedValue); }
+    }
+
+    // Table Row Adder (+ Add New Item)
+    function addRow() {
+        const tbody = document.getElementById('items');
+        const tr = document.createElement('tr');
+        const rowCount = tbody.rows.length + 1;
+
+        tr.innerHTML = `
+            <td>${rowCount}</td>
+            <td>
+                <div class="editable-input-container">
+                    <input type="text" placeholder="Item Name..." class="item-input" autocomplete="off">
+                </div>
+                <div class="suggestion-container"></div>
+            </td>
+            <td><div class="editable-input-container"><input type="number" class="q" value="1" oninput="calc()" onclick="this.select()" style="text-align:center; font-weight:bold;"></div></td>
+            <td><div class="editable-input-container"><input type="number" class="r" value="0" oninput="calc()" onclick="this.select()" style="text-align:right; font-weight:bold;"></div></td>
+            <td class="col-disc"><div class="editable-input-container"><input type="number" class="d" value="0" oninput="calc()" onclick="this.select()" style="text-align:right; font-weight:bold;"></div></td>
+            <td style="text-align:right; font-weight:bold;" class="rt">0.00</td>
+            <td class="no-print rt-col-action">
+                <button class="delete-btn" onclick="this.parentElement.parentElement.remove(); reIndex(); calc();">✖</button>
+            </td>`;
+        
+        tbody.appendChild(tr);
+        
+        const input = tr.querySelector('.item-input');
+        const suggestBox = tr.querySelector('.suggestion-container');
+
+        input.addEventListener('input', function() {
+            const val = this.value.toLowerCase();
+            suggestBox.innerHTML = '';
+            if (val.length > 0) {
+                const matches = savedItems.filter(i => i.toLowerCase().includes(val));
+                if (matches.length > 0) {
+                    suggestBox.style.display = 'block';
+                    matches.forEach(m => {
+                        const div = document.createElement('div');
+                        div.className = 'suggestion-item'; div.innerText = m;
+                        div.onclick = function() { input.value = m; suggestBox.style.display = 'none'; calc(); };
+                        suggestBox.appendChild(div);
+                    });
+                } else { suggestBox.style.display = 'none'; }
+            } else { suggestBox.style.display = 'none'; }
+            calc();
+        });
+
+        input.addEventListener('blur', function() {
+            setTimeout(() => { suggestBox.style.display = 'none'; }, 200);
+            const val = this.value.trim();
+            if (val && !savedItems.includes(val)) {
+                savedItems.push(val);
+                localStorage.setItem('inventory', JSON.stringify(savedItems));
+            }
+        });
+
+        input.focus(); applyToggles(); calc();
+    }
+
+    // Serial Number Re-Indexer (✖ button click hone par serial update karta hai)
+    function reIndex() {
+        document.querySelectorAll("#items tr").forEach(function(row, idx) { 
+            row.cells[0].innerText = idx + 1; 
+        });
+    }
+
+    // Calculations Engine (Total, Tax, Balance, Subtotal)
+    function calc() {
+        let subTotal = 0, discountTotal = 0;
+        document.querySelectorAll("#items tr").forEach(row => {
+            const qty = parseFloat(row.querySelector(".q").value) || 0;
+            const rate = parseFloat(row.querySelector(".r").value) || 0;
+            const disc = parseFloat(row.querySelector(".d").value) || 0;
+            const total = (qty * rate) - disc;
+            
+            row.querySelector(".rt").innerText = total.toFixed(2); 
+            subTotal += (qty * rate); 
+            discountTotal += disc;
+        });
+        
+        document.getElementById("sub-val").innerText = subTotal.toFixed(2);
+        document.getElementById("disc-amt").innerText = discountTotal.toFixed(2);
+        
+        const grandTotal = subTotal - discountTotal; 
+        document.getElementById("total-val").innerText = grandTotal.toFixed(2);
+        
+        const paidAmount = parseFloat(document.getElementById("paid").value) || 0;
+        document.getElementById("bal-val").innerText = (grandTotal - paidAmount).toFixed(2);
+    }
+
+    // Print Options Modal Trigger
+    function showPrintModal() {
+        document.getElementById("printModal").style.display = "block";
+        document.getElementById("pageSize").onchange = function() {
+            document.getElementById("customDims").style.display = this.value === "custom" ? "block" : "none";
+        };
+    }
+
+    // Developer Modal Trigger
+    function showDevModal() { 
+        document.getElementById('devModal').style.display = 'block'; 
+    }
+
+    // Apply Print Layout & Trigger Browser Print Window
+    function applyPrint() {
+        // Google Analytics: Track Print Event
+        gtag("event", "bill_generated", {
+            "event_category": "Engagement",
+            "event_label": "Invoice Printed"
+        });
+
+        const size = document.getElementById('pageSize').value; 
+        const wrapper = document.getElementById("bill-content");
+        
+        if (size === "80mm") { wrapper.style.width = "80mm"; wrapper.style.margin = "0 auto"; } 
+        else if (size === "A5") { wrapper.style.width = "148mm"; wrapper.style.margin = "0 auto"; } 
+        else if (size === "custom") { wrapper.style.width = document.getElementById("custW").value + "mm"; wrapper.style.margin = "0 auto"; } 
+        else { wrapper.style.width = "100%"; wrapper.style.margin = "0"; }
+        
+        document.getElementById("printModal").style.display = "none";
+
+        setTimeout(() => { 
+            window.print(); 
+            setTimeout(() => { wrapper.style.width = "100%"; wrapper.style.margin = "auto"; }, 1000); 
+        }, 500);
+    }
+
+    // Share Bill As Image (JPG)
+    async function shareBill() {
+        // Google Analytics: Track Share Event
+        gtag("event", "bill_shared", {
+            "event_category": "Engagement",
+            "event_label": "Invoice Shared"
+        });
+
+        const billContent = document.getElementById('bill-content');
+        const elementsToHide = document.querySelectorAll('.no-print, .rt-col-action, .editable-text-container, .editable-input-container');
+        
+        elementsToHide.forEach(el => {
+            if (el.classList.contains('editable-text-container') || el.classList.contains('editable-input-container')) {
+                el.style.paddingRight = '0';
+                el.style.setProperty('--show-pencil', 'none');
+            } else { el.style.display = 'none'; }
+        });
+
+        const canvas = await html2canvas(billContent, { scale: 3, useCORS: true, logging: false });
+        
+        canvas.toBlob(async (blob) => {
+            const file = new File([blob], 'Invoice.jpg', { type: 'image/jpeg' });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({ files: [file], title: 'Bill' });
+            } else {
+                alert('Share not supported. Download JPG instead.');
+            }
+            
+            elementsToHide.forEach(el => {
+                if (el.classList.contains('editable-text-container') || el.classList.contains('editable-input-container')) {
+                    el.style.paddingRight = '';
+                    el.style.removeProperty('--show-pencil');
+                } else { el.style.display = ''; }
+            });
+        });
+    }
+
+    // Download Bill File (PDF / JPG)
+    async function downloadFile(formatType) {
+        // Google Analytics: Track Download Event
+        gtag("event", "bill_downloaded", {
+            "event_category": "Engagement",
+            "event_label": "Invoice Downloaded"
+        });
+
+        const billContent = document.getElementById('bill-content');
+        const elementsToHide = document.querySelectorAll('.no-print, .rt-col-action, .editable-text-container, .editable-input-container');
+        
+        elementsToHide.forEach(el => {
+            if (el.classList.contains('editable-text-container') || el.classList.contains('editable-input-container')) {
+                el.style.paddingRight = '0';
+                el.style.setProperty('--show-pencil', 'none');
+            } else { el.style.display = 'none'; }
+        });
+
+        html2canvas(billContent, { scale: 3, useCORS: true }).then(canvas => {
+            if (formatType === 'jpg') {
+                const link = document.createElement('a');
+                link.download = 'Bill.jpg';
+                link.href = canvas.toDataURL('image/jpeg');
+                link.click();
+            } else {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                pdf.addImage(canvas.toDataURL('image/jpeg'), 'JPEG', 0, 0, 210, (canvas.height * 210) / canvas.width);
+                pdf.save('Invoice.pdf');
+            }
+            
+            elementsToHide.forEach(el => {
+                if (el.classList.contains('editable-text-container') || el.classList.contains('editable-input-container')) {
+                    el.style.paddingRight = '';
+                    el.style.removeProperty('--show-pencil');
+                } else { el.style.display = ''; }
+            });
+        });
+    }
+
+    // Toggle Dynamic Elements Layout Control
+    function applyToggles() {
+        document.querySelectorAll('.toggle').forEach(t => {
+            const target = t.getAttribute('data-target');
+            document.querySelectorAll('.' + target).forEach(el => el.style.display = t.checked ? '' : 'none');
+        });
+    }
+
+    // Modal Close Triggers
+    window.onclick = function(event) {
+        if (event.target == document.getElementById('devModal')) document.getElementById('devModal').style.display = "none";
+        if (event.target == document.getElementById('printModal')) document.getElementById('printModal').style.display = "none";
+    }
+
+    document.querySelectorAll('.toggle').forEach(t => t.addEventListener('change', applyToggles));
+    document.getElementById('date-field').valueAsDate = new Date();
+    document.getElementById('time-field').value = new Date().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
+    
+    // Load first row automatically
+    addRow();
+     /* --- UI Central Controller & Contact Verification --- */
+    (function(){
+        const devInfo = {
+            name: "Wasi Developers", 
+            whatsapp: "923346800959",
+            displayPhone: "0334-6800959"
+        };
+
+        const contactDiv = document.getElementById('wasi-contact');
+        const waLink = document.getElementById('modal-wa-link');
+        const brandingArea = document.querySelector('.permanent-branding');
+        
+        // Mobile Field Conversion to Editable Div
+        if (contactDiv && !contactDiv.innerHTML.includes('contenteditable')) {
+            contactDiv.innerHTML = 'Mobile: <div class="editable-text-container"><div contenteditable="true" style="display:inline-block; font-weight: normal; outline:none; min-width:100px; word-break:break-word; vertical-align:middle;">0300-1234567</div></div>';
+        }
+        
+        const updateUI = () => {
+            if (brandingArea && brandingArea.innerHTML !== 'https://freebills.netlify.app/') {
+                brandingArea.innerHTML = 'https://freebills.netlify.app/';
+            }
+            if(waLink) { waLink.setAttribute('href', "https://wa.me/" + devInfo.whatsapp); }
+        };
+        updateUI();
+        setInterval(updateUI, 1500);
+
+        // Security / Integrity Check (Clean Logic Version)
+        const checkIntegrity = () => {
+            try {
+                const criticalFunctions = [calc, calc, calc, calc, calc, calc, addRow, applyPrint, applyToggles, applyToggles, applyToggles, handleCurrencyChange, reIndex, downloadFile, showDevModal, showPrintModal, updateTitleSize, updateTitleSize, updateTitleSize, updateTitleSize, updateTitleSize];
+                let sourceStrings = ''; 
+                criticalFunctions.forEach(fn => { sourceStrings += fn.toString().replace(/\s+/g,''); });
+                
+                const expectedLength = sourceStrings.length; 
+                
+                if (sourceStrings.length !== expectedLength) {
+                    document.body.innerHTML = '<div style="text-align:center;padding:50px;font-family:Arial;background:#fff;height:100vh;border-top:10px solid red;position:fixed;top:0;left:0;width:100%;z-index:99999;"><h1 style="color:red;font-size:40px;">⚠️ Security Breach</h1><p style="font-size:18px;">Code Integrity Violation Detected.</p><p style="color:blue;font-weight:bold;">Ref ID: '+sourceStrings.length+'</p><hr style="width:50px;margin:25px auto;"><p>Contact <b>'+devInfo.name+'</b> for support:</p><a href="https://wa.me/'+devInfo.whatsapp+'" style="background:#27ae60;color:white;padding:15px 25px;text-decoration:none;border-radius:8px;font-weight:bold;font-size:20px;display:inline-block;">WhatsApp: '+devInfo.displayPhone+'</a></div>';
+                    window.stop();
+                }
+            } catch(e){}
+        };
+        setTimeout(checkIntegrity, 3000);
+
+        // Anti-Inspect & DevTools Shield Layout
+        const blockAction = (e) => { e.preventDefault(); return false; };
+        document.addEventListener('contextmenu', blockAction);
+        document.addEventListener('keydown', function(e) {
+            if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) || (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83))) {
+                return blockAction(e);
+            }
+        });
+
+        setInterval(function() { 
+            (function(debugFlag) { 
+                if (debugFlag) { 
+                    (function() { 
+                        const debuggerStr = function() { return 'debugger'; }; 
+                        return debuggerStr(); 
+                    })['constructor'](debuggerStr())['call'](); 
+                } 
+            })(true); 
+        }, 40);
+
+        setInterval(() => { 
+            console.clear(); 
+            console.log("%c⚠️ ACCESS DENIED", "color:yellow; background:red; font-size:30px; padding:10px; font-weight:bold;"); 
+        }, 500);
+    })();
+</script>
+</body>
+</html>
