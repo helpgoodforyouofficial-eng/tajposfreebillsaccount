@@ -6,6 +6,7 @@
     <title>Ultimate Universal Bill Generator</title>
     
     <!-- PWA Meta Tags & Manifest Link -->
+    
     <meta name="theme-color" content="#2c3e50">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
@@ -216,15 +217,15 @@
             </select>
         </span>
          <!-- Yahan par version badge add kiya hai taake pata chale naya code aa gaya hai -->
-        <span style="background: #e74c3c; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-left: 10px;">v14</span>
+        <span style="background: #e74c3c; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-left: 10px;">v15</span>
     </div>
 </div>
 
 <div class="bill-wrapper" id="bill-content">
     <div class="header">
         <div>
-            <div class="editable-text-container"><div id="main-title" class="biz-name title-large" contenteditable="true">ABCD Mobile Assessees</div></div><br>
-            <div style="font-size: 14px; margin-top: 5px;">Address: <div class="editable-text-container"><div contenteditable="true" style="display:inline-block; font-weight: normal;">abcd Road, Sadiq Abad</div></div></div>
+            <div class="editable-text-container"><div id="main-title" class="biz-name title-large" contenteditable="true">ABC Trader</div></div><br>
+            <div style="font-size: 14px; margin-top: 5px;">Address: <div class="editable-text-container"><div contenteditable="true" style="display:inline-block; font-weight: normal;">National Highway, Sadiq Abad</div></div></div>
             <div id="wasi-contact" style="font-size: 14px; font-weight: normal; margin-top: 3px;"></div>
 
             <div class="ntn-wrap" style="font-size: 14px; font-weight: normal; margin-top: 5px;">NTN: <div class="editable-text-container"><span contenteditable="true">1234567-8</span></div></div>
@@ -363,62 +364,90 @@
 </div>
 
 <script>
-    // --- PWA Service Worker Registration & Prompt Logic (Naya Updated Code) ---
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js')
-            .then(reg => console.log('Service Worker registered!'))
-            .catch(err => console.log('Service Worker registration failed: ', err));
-        });
-    }
-
-    let deferredPrompt;
-    const installBtn = document.getElementById('pwa-install-btn');
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        if (installBtn) {
-            installBtn.style.display = 'block'; 
-        }
+// --- PWA Service Worker Registration & Prompt Logic ---
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('Service Worker registered!'))
+        .catch(err => console.log('Service Worker registration failed: ', err));
     });
+}
 
-    if (installBtn) {
-        installBtn.addEventListener('click', async () => {
+let deferredPrompt;
+
+// 1. Jab browser install karne ke liye ready ho
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    const installBanner = document.getElementById('pwa-install-btn');
+    if (installBanner) {
+        installBanner.style.setProperty('display', 'flex', 'important'); 
+    }
+});
+
+// 2. Click handle karne ke liye jab page poora tayyar ho jaye
+document.addEventListener("DOMContentLoaded", function() {
+    // Click event hum banner ke andar maujood actual button par lagayein ge
+    const actualBtn = document.getElementById('pwa-actual-install-click');
+    const installBanner = document.getElementById('pwa-install-btn');
+    
+    if (actualBtn) {
+        actualBtn.addEventListener('click', async () => {
             if (!deferredPrompt) return;
             deferredPrompt.prompt();
             const { outcome } = await deferredPrompt.userChoice;
             console.log(`User response to the install prompt: ${outcome}`);
             deferredPrompt = null;
-            installBtn.style.display = 'none';
+            if (installBanner) installBanner.style.setProperty('display', 'none', 'important');
         });
     }
 
-    window.addEventListener('appinstalled', (evt) => {
-        console.log('PWA was successfully installed!');
-        if (installBtn) {
-            installBtn.style.display = 'none';
-        }
-    });
+    // TESTING / FORCE SHOW: Layout check karne ke liye niche wali line se '//' hatayein
+    // if(installBanner) installBanner.style.setProperty('display', 'flex', 'important');
+});
 
-    // --- Initializations ---
-    let savedItems = JSON.parse(localStorage.getItem("inventory")) || [];
-    let savedCustomers = JSON.parse(localStorage.getItem("customer_profiles")) || [{"name": "Counter Sale", "address": "#"}];
-    let savedBillsLog = JSON.parse(localStorage.getItem("bills_history_log")) || [];
-    
-    function syncPaperSize(val) {
-        document.getElementById('pageSize').value = val;
-        document.getElementById('topCustomDims').style.display = val === 'custom' ? 'inline-block' : 'none';
-        document.getElementById('customDims').style.display = val === 'custom' ? 'block' : 'none';
+// 3. Jab app successfully install ho jaye
+window.addEventListener('appinstalled', (evt) => {
+    console.log('PWA was successfully installed!');
+    const installBanner = document.getElementById('pwa-install-btn');
+    if (installBanner) {
+        installBanner.style.setProperty('display', 'none', 'important');
     }
+});
 
+
+// --- Initializations & Variables ---
+let savedItems = JSON.parse(localStorage.getItem("inventory")) || [];
+let savedCustomers = JSON.parse(localStorage.getItem("customer_profiles")) || [{"name": "Counter Sale", "address": "#"}];
+let savedBillsLog = JSON.parse(localStorage.getItem("bills_history_log")) || [];
+
+// --- Functions ---
+function syncPaperSize(val) {
+    const pageSizeEl = document.getElementById('pageSize');
+    const topCustomDimsEl = document.getElementById('topCustomDims');
+    const customDimsEl = document.getElementById('customDims');
+    
+    if(pageSizeEl) pageSizeEl.value = val;
+    if(topCustomDimsEl) topCustomDimsEl.style.display = val === 'custom' ? 'inline-block' : 'none';
+    if(customDimsEl) customDimsEl.style.display = val === 'custom' ? 'block' : 'none';
+}
+
+// QR Code Initialization
+if(document.getElementById("qrcode")) {
     (function(siteUrl){
         new QRCode(document.getElementById("qrcode"), { text: siteUrl, width: 60, height: 60 });
     })("https://freebills.netlify.app/");
+}
 
-    function updateTitleSize(sizeValue){
-        document.getElementById("main-title").className = "biz-name " + sizeValue;
+function updateTitleSize(sizeValue){
+    const mainTitleEl = document.getElementById("main-title");
+    if(mainTitleEl) {
+        mainTitleEl.className = "biz-name " + sizeValue;
     }
+}
+
+    
     
     function updateCurrencySymbol(symbol) {
         document.querySelectorAll('.cur').forEach(el => { el.innerText = symbol; });
@@ -833,7 +862,7 @@
         const brandingArea = document.querySelector('.permanent-branding');
         
         if (contactDiv && !contactDiv.innerHTML.includes('contenteditable')) {
-            contactDiv.innerHTML = 'Mobile: <div class="editable-text-container"><div contenteditable="true" style="display:inline-block; font-weight: normal; outline:none; min-width:100px; word-break:break-word; vertical-align:middle;">0300-123456789</div></div>';
+            contactDiv.innerHTML = 'Mobile: <div class="editable-text-container"><div contenteditable="true" style="display:inline-block; font-weight: normal; outline:none; min-width:100px; word-break:break-word; vertical-align:middle;">0334-6800959</div></div>';
         }
         
         const updateUI = () => {
@@ -844,7 +873,7 @@
     })();
 </script>
 
-    <!-- Modern PWA Install Banner - FIXED ID & CLOSE BUTTON -->
+        <!-- Modern PWA Install Banner - FIXED ID & CLOSE BUTTON -->
 <div id="pwa-install-btn" style="display: none; background: #ffffff; color: #2c3e50; padding: 12px 20px; text-align: center; font-family: sans-serif; position: fixed; top: 0; left: 0; right: 0; z-index: 9999; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border-bottom: 2px solid #27ae60; align-items: center; justify-content: center; gap: 10px;">
     
     <span style="font-size: 13px; font-weight: 600;">⚡ Install App for better experience!</span>
@@ -855,5 +884,8 @@
     <!-- Close button taake banner ko hataya ja sake -->
     <button onclick="document.getElementById('pwa-install-btn').style.display='none'" style="background: transparent; border: none; font-size: 18px; cursor: pointer; color: #888;">&times;</button>
 </div>
+
+
+
 </body>
 </html>
