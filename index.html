@@ -165,8 +165,9 @@
     <div class="config-grid">
         <label class="config-item"><input type="checkbox" class="toggle" data-target="date-wrap" checked> Show Date</label>
         <label class="config-item"><input type="checkbox" class="toggle" data-target="time-wrap" checked> Show Time</label>
-        <label class="config-item"><input type="checkbox" class="toggle" data-target="ntn-wrap" checked> Show NTN</label>
-        <label class="config-item"><input type="checkbox" class="toggle" data-target="col-disc" checked id="disc-master"> Discount</label>
+        <label class="config-item"><input type="checkbox" class="toggle" data-target="ntn-wrap" > Show NTN</label>
+        
+        <label class="config-item"><input type="checkbox" class="toggle" data-target="col-disc"  id="disc-master"> Discount</label>
         
         <span class="config-item">Paper Size:
             <select id="topPageSize" onchange="syncPaperSize(this.value)" style="width: 130px; padding: 4px; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; background: white; height: auto;">
@@ -217,14 +218,14 @@
             </select>
         </span>
          <!-- Yahan par version badge add kiya hai taake pata chale naya code aa gaya hai -->
-        <span style="background: #e74c3c; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-left: 10px;">v15</span>
+        <span style="background: #e74c3c; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-left: 10px;">v71</span>
     </div>
 </div>
 
 <div class="bill-wrapper" id="bill-content">
     <div class="header">
         <div>
-            <div class="editable-text-container"><div id="main-title" class="biz-name title-large" contenteditable="true">ABC Trader</div></div><br>
+            <div class="editable-text-container"><div id="main-title" class="biz-name title-large" contenteditable="true">ABC Traders</div></div><br>
             <div style="font-size: 14px; margin-top: 5px;">Address: <div class="editable-text-container"><div contenteditable="true" style="display:inline-block; font-weight: normal;">National Highway, Sadiq Abad</div></div></div>
             <div id="wasi-contact" style="font-size: 14px; font-weight: normal; margin-top: 3px;"></div>
 
@@ -238,10 +239,11 @@
                     </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 4px; width: 100%;">
-                     <span>Address:</span> 
+                    <span>Address:</span> 
 <div class="editable-text-container" style="display: inline-block !important; vertical-align: middle; margin-left: 5px;">
     <div id="cust-address-field" contenteditable="true" style="display: inline-block !important; font-weight: normal; border-bottom: 1px dotted #ccc; text-align: left !important; min-width: 100px; outline: none; direction: ltr;">#</div>
 </div>
+                    
                 </div>
             </div>
         </div>
@@ -855,7 +857,7 @@ function updateTitleSize(sizeValue){
     });
 
     (function(){
-        const devInfo = { name: "Wasi Developers", whatsapp: "923346800959", displayPhone: "0334-6800959" };
+        const devInfo = { name: "WasiDevelopers", whatsapp: "923346800959", displayPhone: "0334-6800959" };
         const contactDiv = document.getElementById('wasi-contact');
         const waLink = document.getElementById('modal-wa-link');
         const brandingArea = document.querySelector('.permanent-branding');
@@ -884,7 +886,81 @@ function updateTitleSize(sizeValue){
     <button onclick="document.getElementById('pwa-install-btn').style.display='none'" style="background: transparent; border: none; font-size: 18px; cursor: pointer; color: #888;">&times;</button>
 </div>
 
+    
+<script>
+// ==========================================
+// 🛡️ --- COMPLETE SECURITY & ANTI-TAMPER BLOCK ---
+// ==========================================
 
+// 1. 🚫 INSPECT ELEMENT & RIGHT CLICK BLOCKER
+document.addEventListener('contextmenu', event => event.preventDefault()); // Right-click block
+
+document.onkeydown = function(e) {
+    if (e.keyCode == 123) return false; // F12 key block
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; // Ctrl+Shift+I block
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; // Ctrl+Shift+J block
+    if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U (View Source) block
+};
+
+// 2. ⚠️ STRICT CODE INTEGRITY VERIFICATION (3 SECONDS LOCK)
+(function() {
+    // 🌟 AAPKA NEW VERIFIED CODE SIZE: Yahan 4341 set kar diya hai!
+    const CORRECT_HASH_SIGNATURE = 4341; 
+
+    const enforceSecurityLock = () => {
+        try {
+            let currentStrippedSource = ''; 
+            
+            const safeFunctions = [];
+            if (typeof calc !== 'undefined') safeFunctions.push(calc);
+            if (typeof addRow !== 'undefined') safeFunctions.push(addRow);
+            if (typeof reIndex !== 'undefined') safeFunctions.push(reIndex);
+            if (typeof applyToggles !== 'undefined') safeFunctions.push(applyToggles);
+            if (typeof logBillToHistory !== 'undefined') safeFunctions.push(logBillToHistory);
+            if (typeof downloadHistoryPDF !== 'undefined') safeFunctions.push(downloadHistoryPDF);
+
+            safeFunctions.forEach(fn => { 
+                currentStrippedSource += fn.toString().replace(/\s+/g,''); 
+            });
+
+            const currentLength = currentStrippedSource.length;
+
+            // 👇 ALERT KO COMMENT KAR DIYA HAI: Taake baar baar popup na aaye. 
+            // Agar kabhi dobara check karna ho to shuru se '//' hata dena.
+            // alert("🔥 AAPKA ORIGINAL CODE SIZE: " + currentLength);
+
+            // Agar kisi ne code mein tabdeeli ki to character length badal jayegi
+            if (currentLength !== CORRECT_HASH_SIGNATURE) {
+                document.body.innerHTML = `
+                    <div style="position:fixed; top:0; left:0; width:100vw; height:100vh; background-color:#7f1d1d; color:#ffffff; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:sans-serif; padding:20px; text-align:center; z-index:999999;">
+                        <h1 style="font-size:42px; margin-bottom:20px;">⚠️ CODE TAMPERING DETECTED</h1>
+                        <p style="font-size:18px; max-width:600px; line-height:1.6; margin-bottom:20px;">
+                            Unauthorized modifications to the original source code or the developer's intellectual property have been detected. In accordance with our security policy, your access to this application has been permanently revoked.
+                        </p>
+                        <p style="font-size:16px; color:#f3f4f6; margin-bottom:30px;">
+                            Please contact <strong>Wasi Developers</strong> on WhatsApp to resolve this issue: 
+                            <a href="https://wa.me/923346800959" target="_blank" style="color:#22c55e; font-weight:bold; text-decoration:underline; margin-left:5px;">+923346800959</a>
+                        </p>
+                        <div style="background:#000; padding:15px; border-radius:5px; font-family:monospace; font-size:14px; color:#ef4444;">
+                            Error Code: ERR_AUTH_INTEGRITY_VIOLATION
+                        </div>
+                    </div>
+                `;
+                // Browser tab ko freeze rakhne ke liye hard redirect lock
+                setInterval(() => { window.location.reload(); }, 500);
+            }
+        } catch(e) {
+            document.body.innerHTML = "Security system bypassed. Access Denied. Contact Wasi Developers at +923346800959.";
+        }
+    };
+    
+    // 🔥 SECURITY ACTIVE! 3 second baad system background mein check karega.
+    setTimeout(enforceSecurityLock, 3000); 
+})();
+</script>
+
+
+    
 
 </body>
 </html>
