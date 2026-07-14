@@ -162,13 +162,15 @@
         <label><input type="radio" name="tsize" value="title-medium" onclick="updateTitleSize(this.value)"> Medium</label>
         <label><input type="radio" name="tsize" value="title-large" checked onclick="updateTitleSize(this.value)"> Large</label>
     </div>
-    <div class="config-grid">
-        <label class="config-item"><input type="checkbox" class="toggle" data-target="date-wrap" checked> Show Date</label>
-        <label class="config-item"><input type="checkbox" class="toggle" data-target="time-wrap" checked> Show Time</label>
-        <label class="config-item"><input type="checkbox" class="toggle" data-target="ntn-wrap" > Show NTN</label>
-        
-        <label class="config-item"><input type="checkbox" class="toggle" data-target="col-disc"  id="disc-master"> Discount</label>
-        
+            <div class="config-grid">
+        <label class="config-item"><input type="checkbox" class="toggle" data-target="date-wrap" checked style="transform: scale(1.25); margin-right: 5px; cursor: pointer;"> Show Date</label>
+        <label class="config-item"><input type="checkbox" class="toggle" data-target="time-wrap" checked style="transform: scale(1.25); margin-right: 5px; cursor: pointer;"> Show Time</label>
+        <label class="config-item"><input type="checkbox" class="toggle" data-target="ntn-wrap" style="transform: scale(1.25); margin-right: 5px; cursor: pointer;"> Show NTN</label>
+        <label class="config-item"><input type="checkbox" class="toggle" data-target="col-disc" id="disc-master" style="transform: scale(1.25); margin-right: 5px; cursor: pointer;"> Discount</label>
+        <label class="config-item"><input type="checkbox" class="toggle" data-target="tax-row" id="tax-master" style="transform: scale(1.25); margin-right: 5px; cursor: pointer;"> Tax (GST)</label>
+        <label class="config-item"><input type="checkbox" class="toggle" data-target="note-row" id="note-master" style="transform: scale(1.25); margin-right: 5px; cursor: pointer;"> Show Note</label>
+  
+
         <span class="config-item">Paper Size:
             <select id="topPageSize" onchange="syncPaperSize(this.value)" style="width: 130px; padding: 4px; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; background: white; height: auto;">
                 <option value="A4" selected>Standard A4</option>
@@ -279,14 +281,59 @@
     <button class="btn-add no-print" onclick="addRow()">+ Add New Item</button>
     
     <div class="summary-box">
-        <table class="sum-table">
-            <tr><td>Sub Total:</td><td><span class="cur">Rs</span> <span id="sub-val">0.00</span></td></tr>
-            <tr class="col-disc" style="color: green;"><td>Discount:</td><td>- <span id="disc-amt">0.00</span></td></tr>
-            <tr style="font-weight:bold; font-size:1.25em; border-top: 2px solid #333;"><td>Grand Total:</td><td><span class="cur">Rs</span> <span id="total-val">0.00</span></td></tr>
-            <tr><td>Received:</td><td><div class="editable-text-container" style="padding-right:15px;"><input type="number" id="paid" value="0" oninput="calc()" style="text-align:right; font-weight:bold; width:95px; height:30px; line-height:30px; padding-bottom:2px; display:inline-block; vertical-align:middle;" onclick="this.select()"></div></td></tr>
-            <tr style="color:red; font-weight:bold;"><td>Pending Balance:</td><td><span class="cur">Rs</span> <span id="bal-val">0.00</span></td></tr>
-        </table>
+    <table class="sum-table">
+        <tr>
+            <td>Sub Total:</td>
+            <td><span class="cur">Rs</span> <span id="sub-val">0.00</span></td>
+        </tr>
+        
+        <tr class="col-disc" style="color: green; display: none;">
+            <td>Discount:</td>
+            <td>- <span id="disc-amt">0.00</span></td>
+        </tr>
+
+        <tr class="tax-row" style="color: #c0392b; display: none;">
+    <td>
+        Tax (GST <span id="tax-rate-field" contenteditable="true" style="border-bottom: 1px dashed #c0392b; padding: 0 2px; outline: none; font-weight: bold; display: inline-block;">2.5</span>% 
+        <span class="no-print" style="font-size: 0.85em; color: #888; margin-left: 2px; cursor: pointer;">✏️</span>):
+    </td>
+    <td>+ <span id="tax-amount">0.00</span></td>
+</tr>
+
+
+
+        <tr style="font-weight:bold; font-size:1.25em; border-top: 2px solid #333;">
+            <td>Grand Total:</td>
+            <td><span class="cur">Rs</span> <span id="total-val">0.00</span></td>
+        </tr>
+        <tr>
+            <td>Received:</td>
+            <td>
+                <div class="editable-text-container" style="padding-right:15px;">
+                    <input type="number" id="paid" value="0" oninput="calc()" style="text-align:right; font-weight:bold; width:95px; height:30px; line-height:30px; padding-bottom:2px; display:inline-block; vertical-align:middle;" onclick="this.select()">
+                </div>
+            </td>
+        </tr>
+        <tr style="color:red; font-weight:bold;">
+            <td>Pending Balance:</td>
+            <td><span class="cur">Rs</span> <span id="bal-val">0.00</span></td>
+        </tr>
+    </table>
+</div>
+
+
+<!-- 📝 MULTI-LANGUAGE ADJUSTABLE NOTE BOX (FIXED MIN-WIDTH & RTL/LTR SENSOR) -->
+<div class="note-row" style="position: absolute; left: 190px; right: 210px; bottom: 10px; display: none; padding-left: 10px; padding-right: 10px; padding-top: 5px; padding-bottom: 5px; box-sizing: border-box;">
+    <!-- Title Section (Isme bhi text-align: start hai taake heading bhi language ke hisab se shift ho sake) -->
+    <div dir="auto" style="font-weight: bold; font-size: 11px; color: #555; margin-bottom: 2px; text-align: start;">
+        Note / Terms: <span class="no-print" style="font-size: 0.85em; color: #888; margin-left: 2px; cursor: pointer;">✏️</span>
     </div>
+    
+    <!-- Note Content (min-width, dir="auto", aur text-align: start ke sath) -->
+    <div id="note-body" contenteditable="true" dir="auto" style="border: 1px dashed #ccc; padding: 6px; border-radius: 4px; font-size: 11px; min-height: 40px; min-width: 250px; width: fit-content; max-width: 100%; color: #333; outline: none; background: rgba(250, 250, 250, 0.95); line-height: 1.3; white-space: normal; text-align: start; word-wrap: break-word; word-break: break-word; overflow-wrap: break-word;" placeholder="Write note...">Thank you for your business!</div>
+</div>
+
+
 
     <div class="footer-area">
         <div class="qr-section">
@@ -533,27 +580,47 @@ function updateTitleSize(sizeValue){
     }
 
     function calc() {
-        let subTotal = 0, discountTotal = 0;
-        document.querySelectorAll("#items tr").forEach(row => {
-            const qty = parseFloat(row.querySelector(".q").value) || 0;
-            const rate = parseFloat(row.querySelector(".r").value) || 0;
-            const disc = parseFloat(row.querySelector(".d").value) || 0;
-            const total = (qty * rate) - disc;
-            
-            row.querySelector(".rt").innerText = total.toFixed(2); 
-            subTotal += (qty * rate); 
-            discountTotal += disc;
-        });
+    let subTotal = 0, discountTotal = 0;
+    document.querySelectorAll("#items tr").forEach(row => {
+        const qty = parseFloat(row.querySelector(".q").value) || 0;
+        const rate = parseFloat(row.querySelector(".r").value) || 0;
+        const disc = parseFloat(row.querySelector(".d").value) || 0;
+        const total = (qty * rate) - disc;
         
-        document.getElementById("sub-val").innerText = subTotal.toFixed(2);
-        document.getElementById("disc-amt").innerText = discountTotal.toFixed(2);
-        
-        const grandTotal = subTotal - discountTotal; 
-        document.getElementById("total-val").innerText = grandTotal.toFixed(2);
-        
-        const paidAmount = parseFloat(document.getElementById("paid").value) || 0;
-        document.getElementById("bal-val").innerText = (grandTotal - paidAmount).toFixed(2);
+        row.querySelector(".rt").innerText = total.toFixed(2); 
+        subTotal += (qty * rate); 
+        discountTotal += disc;
+    });
+    
+    document.getElementById("sub-val").innerText = subTotal.toFixed(2);
+    document.getElementById("disc-amt").innerText = discountTotal.toFixed(2);
+    
+    // 1. Discount minus karne ke baad jo amount bachi (Jis par tax lagna hai)
+    const totalAfterDiscount = subTotal - discountTotal; 
+
+    // 2. Dynamic Tax (GST) Calculation 🌟
+    let taxAmount = 0;
+    const taxMaster = document.getElementById('tax-master'); // Top configuration checkbox
+    const taxRateField = document.getElementById('tax-rate-field'); // Editable 18% text span
+    
+    // Agar tax wala master checkbox checked ho to hi calculate karein
+    if (taxMaster && taxMaster.checked) {
+        let taxPercent = parseFloat(taxRateField ? taxRateField.innerText : 18) || 0;
+        taxAmount = totalAfterDiscount * (taxPercent / 100);
+        document.getElementById("tax-amount").innerText = taxAmount.toFixed(2);
+    } else {
+        document.getElementById("tax-amount").innerText = "0.00";
     }
+    
+    // 3. Grand Total (Discount minus aur Tax plus karne ke baad)
+    const grandTotal = totalAfterDiscount + taxAmount; 
+    document.getElementById("total-val").innerText = grandTotal.toFixed(2);
+    
+    // 4. Pending Balance Calculation
+    const paidAmount = parseFloat(document.getElementById("paid").value) || 0;
+    document.getElementById("bal-val").innerText = (grandTotal - paidAmount).toFixed(2);
+}
+
 
     function captureCustomerName() {
         const custSpan = document.getElementById("cust-name-field");
@@ -856,6 +923,49 @@ function updateTitleSize(sizeValue){
         });
     });
 
+
+document.addEventListener("DOMContentLoaded", function () {
+    const noteBody = document.getElementById("note-body");
+
+    if (noteBody) {
+        // 1. Page load hote hi agar pehle se koi saved note hai to load karein
+        const savedNote = localStorage.getItem("custom_invoice_note");
+        if (savedNote !== null) {
+            noteBody.innerText = savedNote;
+        }
+
+        // 2. Live Save: Jaise hi user ek bhi character type karega, automatic save ho jayega
+        noteBody.addEventListener("input", function () {
+            localStorage.setItem("custom_invoice_note", this.innerText);
+        });
+
+        // 3. Selection Ease: Click karte hi default text select ho jaye
+        noteBody.addEventListener("focus", function () {
+            if (this.innerText.trim() === "Thank you for your business!") {
+                document.execCommand('selectAll', false, null);
+            }
+        });
+    }
+});
+
+
+
+
+// 📊 TAX RATE CO LIVE CALCULATE KARNE KA CODE
+const taxRateField = document.getElementById('tax-rate-field');
+
+if (taxRateField) {
+    // Jab user type kar raha ho (Usi waqt live calculation ke liye)
+    taxRateField.addEventListener('input', function() {
+        calc(); 
+    });
+
+    // Jab user click kare, to text select ho jaye (Taping aasan karne ke liye)
+    taxRateField.addEventListener('click', function() {
+        document.execCommand('selectAll', false, null);
+    });
+}
+
     (function(){
         const devInfo = { name: "WasiDevelopers", whatsapp: "923346800959", displayPhone: "0334-6800959" };
         const contactDiv = document.getElementById('wasi-contact');
@@ -905,7 +1015,7 @@ document.onkeydown = function(e) {
 // 2. ⚠️ STRICT CODE INTEGRITY VERIFICATION (3 SECONDS LOCK)
 (function() {
     // 🌟 AAPKA NEW VERIFIED CODE SIZE: Yahan 4341 set kar diya hai!
-    const CORRECT_HASH_SIGNATURE = 4341; 
+    const CORRECT_HASH_SIGNATURE = 5073; 
 
     const enforceSecurityLock = () => {
         try {
@@ -927,7 +1037,7 @@ document.onkeydown = function(e) {
 
             // 👇 ALERT KO COMMENT KAR DIYA HAI: Taake baar baar popup na aaye. 
             // Agar kabhi dobara check karna ho to shuru se '//' hata dena.
-            // alert("🔥 AAPKA ORIGINAL CODE SIZE: " + currentLength);
+             // alert("🔥 AAPKA ORIGINAL CODE SIZE: " + currentLength);
 
             // Agar kisi ne code mein tabdeeli ki to character length badal jayegi
             if (currentLength !== CORRECT_HASH_SIGNATURE) {
