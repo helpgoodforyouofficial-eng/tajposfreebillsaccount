@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bill-gen-v14'; // Version ko v10 kar diya
+const CACHE_NAME = 'bill-gen-v15'; // Version ko v10 kar diya
 const ASSETS = [
   'index.html',
   'manifest.json',
