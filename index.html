@@ -905,93 +905,121 @@ function updateTitleSize(sizeValue){
     addRow();
 
     document.addEventListener("DOMContentLoaded", function() {
-        renderBillsHistory();
+    // 🟢 1. Bills History & Bill Number Load
+    renderBillsHistory();
 
-        const lastBill = localStorage.getItem("last_bill_no");
-        if (lastBill) {
-            document.getElementById("bill-no").innerText = lastBill;
-        }
+    const lastBill = localStorage.getItem("last_bill_no");
+    if (lastBill) {
+        document.getElementById("bill-no").innerText = lastBill;
+    }
 
-        const custSpan = document.getElementById("cust-name-field");
-        const addrDiv = document.getElementById("cust-address-field");
-        if (custSpan && addrDiv) {
-            const wrap = custSpan.parentElement; wrap.style.position = "relative";
-            
-            const cSuggestBox = document.createElement("div");
-            cSuggestBox.className = "suggestion-container";
-            cSuggestBox.style.position = "absolute"; cSuggestBox.style.top = "100%"; cSuggestBox.style.left = "0"; cSuggestBox.style.width = "200px"; cSuggestBox.style.zIndex = "99999";
-            wrap.appendChild(cSuggestBox);
-
-            custSpan.addEventListener("input", function() {
-                const val = this.innerText.trim().toLowerCase();
-                cSuggestBox.innerHTML = '';
-                if (val.length > 0) {
-                    const matches = savedCustomers.filter(c => c.name.toLowerCase().includes(val));
-                    if (matches.length > 0) {
-                        cSuggestBox.style.display = 'block';
-                        matches.forEach(m => {
-                            const div = document.createElement('div');
-                            div.className = 'suggestion-item'; div.innerText = m.name; div.style.cursor = "pointer";
-                            div.onclick = function() {
-                                custSpan.innerText = m.name; addrDiv.innerText = m.address || "#"; cSuggestBox.style.display = 'none';
-                                const range = document.createRange(); const sel = window.getSelection();
-                                range.selectNodeContents(custSpan); range.collapse(false);
-                                sel.removeAllRanges(); sel.addRange(range);
-                            };
-                            cSuggestBox.appendChild(div);
-                        });
-                    } else { cSuggestBox.style.display = 'none'; }
-                } else { cSuggestBox.style.display = 'none'; }
-            });
-
-            custSpan.addEventListener('blur', function() { setTimeout(() => { cSuggestBox.style.display = 'none'; }, 200); });
-        }
+    // 🟢 2. Customer Suggestions Box Logic
+    const custSpan = document.getElementById("cust-name-field");
+    const addrDiv = document.getElementById("cust-address-field");
+    if (custSpan && addrDiv) {
+        const wrap = custSpan.parentElement; 
+        wrap.style.position = "relative";
         
-        document.getElementById('pageSize').addEventListener('change', function() {
+        const cSuggestBox = document.createElement("div");
+        cSuggestBox.className = "suggestion-container";
+        cSuggestBox.style.position = "absolute"; 
+        cSuggestBox.style.top = "100%"; 
+        cSuggestBox.style.left = "0"; 
+        cSuggestBox.style.width = "200px"; 
+        cSuggestBox.style.zIndex = "99999";
+        wrap.appendChild(cSuggestBox);
+
+        custSpan.addEventListener("input", function() {
+            const val = this.innerText.trim().toLowerCase();
+            cSuggestBox.innerHTML = '';
+            if (val.length > 0) {
+                const matches = savedCustomers.filter(c => c.name.toLowerCase().includes(val));
+                if (matches.length > 0) {
+                    cSuggestBox.style.display = 'block';
+                    matches.forEach(m => {
+                        const div = document.createElement('div');
+                        div.className = 'suggestion-item'; 
+                        div.innerText = m.name; 
+                        div.style.cursor = "pointer";
+                        div.onclick = function() {
+                            custSpan.innerText = m.name; 
+                            addrDiv.innerText = m.address || "#"; 
+                            cSuggestBox.style.display = 'none';
+                            const range = document.createRange(); 
+                            const sel = window.getSelection();
+                            range.selectNodeContents(custSpan); 
+                            range.collapse(false);
+                            sel.removeAllRanges(); 
+                            sel.addRange(range);
+                        };
+                        cSuggestBox.appendChild(div);
+                    });
+                } else { cSuggestBox.style.display = 'none'; }
+            } else { cSuggestBox.style.display = 'none'; }
+        });
+
+        custSpan.addEventListener('blur', function() { 
+            setTimeout(() => { cSuggestBox.style.display = 'none'; }, 200); 
+        });
+    }
+    
+    // Page Size Logic
+    const pageSizeElement = document.getElementById('pageSize');
+    if (pageSizeElement) {
+        pageSizeElement.addEventListener('change', function() {
             document.getElementById('topPageSize').value = this.value;
             document.getElementById('topCustomDims').style.display = this.value === 'custom' ? 'inline-block' : 'none';
         });
-    });
+    }
 
-
-document.addEventListener("DOMContentLoaded", function () {
+    // 🟢 3. Invoice Notes Auto-Save Logic
     const noteBody = document.getElementById("note-body");
-
     if (noteBody) {
-        // 1. Page load hote hi agar pehle se koi saved note hai to load karein
         const savedNote = localStorage.getItem("custom_invoice_note");
         if (savedNote !== null) {
             noteBody.innerText = savedNote;
         }
 
-        // 2. Live Save: Jaise hi user ek bhi character type karega, automatic save ho jayega
         noteBody.addEventListener("input", function () {
             localStorage.setItem("custom_invoice_note", this.innerText);
         });
 
-        // 3. Selection Ease: Click karte hi default text select ho jaye
         noteBody.addEventListener("focus", function () {
             if (this.innerText.trim() === "Thank you for your business!") {
                 document.execCommand('selectAll', false, null);
             }
         });
     }
-});
 
-// Jab user Discount checkbox ko check ya uncheck kare, to fauran dobara calculation chale
-const discMaster = document.getElementById('disc-master');
-if (discMaster) {
-    discMaster.addEventListener('change', function() {
-        calc();
-    });
-}
+    // 🟢 4. TAX & DISCOUNT LIVE CALCULATION LISTENERS (DOM ke andar)
+    
+    // A) Discount Master Checkbox Live Click
+    const discMaster = document.getElementById('disc-master');
+    if (discMaster) {
+        discMaster.addEventListener('change', function() {
+            calc();
+        });
+    }
 
-  // 2. Tax Rate Field ke liye (Jab percentage change ho)
+    // B) Tax Master Checkbox (LIVE UNCHECK RESET KE LIYE SABSE ZAROORI)
+    const taxMaster = document.getElementById('tax-master');
+    if (taxMaster) {
+        taxMaster.addEventListener('change', function() {
+            calc();
+        });
+    }
+
+    // C) Tax Rate Field (Value input ya change karne par)
     const taxRateField = document.getElementById('tax-rate-field');
     if (taxRateField) {
-        // Agar input field hai to change ya input par chalega
+        // Agar dynamic span/div hai ya input field hai, donon conditions cover ho jayengi
         taxRateField.addEventListener('input', calc);
         taxRateField.addEventListener('change', calc);
+        taxRateField.addEventListener('keyup', calc);
+        taxRateField.addEventListener('blur', calc);
+    }
+});
+
 
 
 
@@ -1094,7 +1122,7 @@ document.onkeydown = function(e) {
     };
     
     // 🔥 SECURITY ACTIVE! 3 second baad system background mein check karega.
-    setTimeout(enforceSecurityLock, 3000); 
+   setTimeout(enforceSecurityLock, 3000); 
 })();
 </script>
 
