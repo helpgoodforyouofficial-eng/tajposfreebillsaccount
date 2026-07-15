@@ -986,7 +986,12 @@ if (discMaster) {
     });
 }
 
-
+  // 2. Tax Rate Field ke liye (Jab percentage change ho)
+    const taxRateField = document.getElementById('tax-rate-field');
+    if (taxRateField) {
+        // Agar input field hai to change ya input par chalega
+        taxRateField.addEventListener('input', calc);
+        taxRateField.addEventListener('change', calc);
 
 
 
