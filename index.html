@@ -614,19 +614,21 @@ function updateTitleSize(sizeValue){
         discAmtField.innerText = discountTotal.toFixed(2);
     }
 
-    // 2. TAX & GRAND TOTAL LOGIC WITH CHECKBOX SENSOR
+    // 2. TAX LOGIC WITH LIVE UNCHECK / CHANGE SENSOR
     let taxAmount = 0;
     const taxMaster = document.getElementById('tax-master');
     const taxRateField = document.getElementById('tax-rate-field');
     const taxAmountField = document.getElementById('tax-amount');
 
+    // Agar tax check hai to calculate kare, warna default 0 rahega (is se live uncheck reset ho jayega)
     if (taxMaster && taxMaster.checked && taxRateField) {
-        const taxPercent = parseFloat(taxRateField.innerText) || 0;
+        const taxPercent = parseFloat(taxRateField.innerText) || parseFloat(taxRateField.value) || 0;
         // Tax hamesha (SubTotal - Total Discount) par calculate hota hai
         const taxableAmount = subTotal - discountTotal;
         taxAmount = (taxableAmount * taxPercent) / 100;
     }
 
+    // UI par tax live update ya reset (0.00) karna
     if (taxAmountField) {
         taxAmountField.innerText = taxAmount.toFixed(2);
     }
@@ -645,6 +647,7 @@ function updateTitleSize(sizeValue){
         balValField.innerText = balance.toFixed(2);
     }
 }
+
 
 
 
@@ -1058,7 +1061,7 @@ document.onkeydown = function(e) {
 
             // 👇 ALERT KO COMMENT KAR DIYA HAI: Taake baar baar popup na aaye. 
             // Agar kabhi dobara check karna ho to shuru se '//' hata dena.
-           //  alert("🔥 AAPKA ORIGINAL CODE SIZE: " + currentLength);
+             alert("🔥 AAPKA ORIGINAL CODE SIZE: " + currentLength);
 
             // Agar kisi ne code mein tabdeeli ki to character length badal jayegi
             if (currentLength !== CORRECT_HASH_SIGNATURE) {
