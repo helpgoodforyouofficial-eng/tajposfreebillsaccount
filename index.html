@@ -585,6 +585,8 @@ function updateTitleSize(sizeValue){
 
     function calc() {
     let subTotal = 0, discountTotal = 0;
+    
+    // 1. Har item ki calculation
     document.querySelectorAll("#items tr").forEach(row => {
         const qty = parseFloat(row.querySelector(".q").value) || 0;
         const rate = parseFloat(row.querySelector(".r").value) || 0;
@@ -596,9 +598,65 @@ function updateTitleSize(sizeValue){
         discountTotal += disc;
     });
     
+    // Values ko UI par show karna
     document.getElementById("sub-val").innerText = subTotal.toFixed(2);
     document.getElementById("disc-amt").innerText = discountTotal.toFixed(2);
+
+    // 2. TAX & GRAND TOTAL LOGIC WITH CHECKBOX SENSOR 🟢
+    let taxAmount = 0;
+    const taxMaster = document.getElementById('tax-master');
+    const taxRateField = document.getElementById('tax-rate-field');
+    const taxAmountField = document.getElementById('tax-amount');
+
+    // Agar Tax ka checkbox screen par mojood hai aur checked hai, to hi tax calculate ho
+    if (taxMaster && taxMaster.checked && taxRateField) {
+        const taxPercent = parseFloat(taxRateField.innerText) || 0;
+        // Tax hamesha (SubTotal - Total Discount) par calculate hota hai
+        const taxableAmount = subTotal - discountTotal;
+        taxAmount = (taxableAmount * taxPercent) / 100;
+    }
+
+    // Tax ki amount ko screen par show karna (Uncheck par automatic 0.00 ho jayegi)
+    if (taxAmountField) {
+        taxAmountField.innerText = taxAmount.toFixed(2);
+    }
+
+    // 3. GRAND TOTAL CALCULATION (SubTotal - Discount + Tax)
+    const grandTotal = (subTotal - discountTotal) + taxAmount;
+    document.getElementById("total-val").innerText = grandTotal.toFixed(2);
+
+    // 4. PENDING BALANCE CALCULATION
+    const paidInput = document.getElementById("paid");
+    const paid = parseFloat(paidInput ? paidInput.value : 0) || 0;
+    const balance = grandTotal - paid;
     
+    const balValField = document.getElementById("bal-val");
+    if (balValField) {
+        balValField.innerText = balance.toFixed(2);
+    }
+}
+
+// 📊 TAX RATE CO LIVE CALCULATE KARNE KA CODE WITH CHECKBOX SYNC
+const taxRateField = document.getElementById('tax-rate-field');
+const taxMaster = document.getElementById('tax-master');
+
+if (taxRateField) {
+    taxRateField.addEventListener('input', function() {
+        calc(); 
+    });
+
+    taxRateField.addEventListener('click', function() {
+        document.execCommand('selectAll', false, null);
+    });
+}
+
+// Jab user Tax checkbox ko check ya uncheck kare, to usi waqt calculation dobara chale 🟢
+if (taxMaster) {
+    taxMaster.addEventListener('change', function() {
+        calc();
+    });
+}
+
     // 1. Discount minus karne ke baad jo amount bachi (Jis par tax lagna hai)
     const totalAfterDiscount = subTotal - discountTotal; 
 
@@ -953,23 +1011,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-
-
-// 📊 TAX RATE CO LIVE CALCULATE KARNE KA CODE
-const taxRateField = document.getElementById('tax-rate-field');
-
-if (taxRateField) {
-    // Jab user type kar raha ho (Usi waqt live calculation ke liye)
-    taxRateField.addEventListener('input', function() {
-        calc(); 
-    });
-
-    // Jab user click kare, to text select ho jaye (Taping aasan karne ke liye)
-    taxRateField.addEventListener('click', function() {
-        document.execCommand('selectAll', false, null);
-    });
-}
-
     (function(){
         const devInfo = { name: "WasiDevelopers", whatsapp: "923346800959", displayPhone: "0334-6800959" };
         const contactDiv = document.getElementById('wasi-contact');
@@ -1041,7 +1082,7 @@ document.onkeydown = function(e) {
 
             // 👇 ALERT KO COMMENT KAR DIYA HAI: Taake baar baar popup na aaye. 
             // Agar kabhi dobara check karna ho to shuru se '//' hata dena.
-             // alert("🔥 AAPKA ORIGINAL CODE SIZE: " + currentLength);
+              alert("🔥 AAPKA ORIGINAL CODE SIZE: " + currentLength);
 
             // Agar kisi ne code mein tabdeeli ki to character length badal jayegi
             if (currentLength !== CORRECT_HASH_SIGNATURE) {
