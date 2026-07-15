@@ -586,11 +586,18 @@ function updateTitleSize(sizeValue){
     function calc() {
     let subTotal = 0, discountTotal = 0;
     
+    // 🟢 DISCOUNT MASTER CHECKBOX DETECTION
+    const discMaster = document.getElementById('disc-master');
+    const isDiscountActive = discMaster ? discMaster.checked : false;
+
     // 1. Har item ki calculation
     document.querySelectorAll("#items tr").forEach(row => {
         const qty = parseFloat(row.querySelector(".q").value) || 0;
         const rate = parseFloat(row.querySelector(".r").value) || 0;
-        const disc = parseFloat(row.querySelector(".d").value) || 0;
+        
+        // Agar discount unchecked hai, to item-level disc zero (0) tasawwur ho
+        const disc = isDiscountActive ? (parseFloat(row.querySelector(".d").value) || 0) : 0;
+        
         const total = (qty * rate) - disc;
         
         row.querySelector(".rt").innerText = total.toFixed(2); 
@@ -600,15 +607,19 @@ function updateTitleSize(sizeValue){
     
     // Values ko UI par show karna
     document.getElementById("sub-val").innerText = subTotal.toFixed(2);
-    document.getElementById("disc-amt").innerText = discountTotal.toFixed(2);
+    
+    // Discount display reset if unchecked
+    const discAmtField = document.getElementById("disc-amt");
+    if (discAmtField) {
+        discAmtField.innerText = discountTotal.toFixed(2);
+    }
 
-    // 2. TAX & GRAND TOTAL LOGIC WITH CHECKBOX SENSOR 🟢
+    // 2. TAX & GRAND TOTAL LOGIC WITH CHECKBOX SENSOR
     let taxAmount = 0;
     const taxMaster = document.getElementById('tax-master');
     const taxRateField = document.getElementById('tax-rate-field');
     const taxAmountField = document.getElementById('tax-amount');
 
-    // Agar Tax ka checkbox screen par mojood hai aur checked hai, to hi tax calculate ho
     if (taxMaster && taxMaster.checked && taxRateField) {
         const taxPercent = parseFloat(taxRateField.innerText) || 0;
         // Tax hamesha (SubTotal - Total Discount) par calculate hota hai
@@ -616,7 +627,6 @@ function updateTitleSize(sizeValue){
         taxAmount = (taxableAmount * taxPercent) / 100;
     }
 
-    // Tax ki amount ko screen par show karna (Uncheck par automatic 0.00 ho jayegi)
     if (taxAmountField) {
         taxAmountField.innerText = taxAmount.toFixed(2);
     }
@@ -636,26 +646,6 @@ function updateTitleSize(sizeValue){
     }
 }
 
-// 📊 TAX RATE CO LIVE CALCULATE KARNE KA CODE WITH CHECKBOX SYNC
-const taxRateField = document.getElementById('tax-rate-field');
-const taxMaster = document.getElementById('tax-master');
-
-if (taxRateField) {
-    taxRateField.addEventListener('input', function() {
-        calc(); 
-    });
-
-    taxRateField.addEventListener('click', function() {
-        document.execCommand('selectAll', false, null);
-    });
-}
-
-// Jab user Tax checkbox ko check ya uncheck kare, to usi waqt calculation dobara chale 🟢
-if (taxMaster) {
-    taxMaster.addEventListener('change', function() {
-        calc();
-    });
-}
 
 
 
@@ -985,6 +975,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
+// Jab user Discount checkbox ko check ya uncheck kare, to fauran dobara calculation chale
+const discMaster = document.getElementById('disc-master');
+if (discMaster) {
+    discMaster.addEventListener('change', function() {
+        calc();
+    });
+}
 
 
 
@@ -1039,7 +1036,7 @@ document.onkeydown = function(e) {
 // 2. ⚠️ STRICT CODE INTEGRITY VERIFICATION (3 SECONDS LOCK)
 (function() {
     // 🌟 AAPKA NEW VERIFIED CODE SIZE: Yahan 4341 set kar diya hai!
-    const CORRECT_HASH_SIGNATURE = 5238; 
+    const CORRECT_HASH_SIGNATURE = 5412; 
 
     const enforceSecurityLock = () => {
         try {
@@ -1061,7 +1058,7 @@ document.onkeydown = function(e) {
 
             // 👇 ALERT KO COMMENT KAR DIYA HAI: Taake baar baar popup na aaye. 
             // Agar kabhi dobara check karna ho to shuru se '//' hata dena.
-          //    alert("🔥 AAPKA ORIGINAL CODE SIZE: " + currentLength);
+           //  alert("🔥 AAPKA ORIGINAL CODE SIZE: " + currentLength);
 
             // Agar kisi ne code mein tabdeeli ki to character length badal jayegi
             if (currentLength !== CORRECT_HASH_SIGNATURE) {
