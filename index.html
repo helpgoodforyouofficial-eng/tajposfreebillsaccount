@@ -657,31 +657,6 @@ if (taxMaster) {
     });
 }
 
-    // 1. Discount minus karne ke baad jo amount bachi (Jis par tax lagna hai)
-    const totalAfterDiscount = subTotal - discountTotal; 
-
-    // 2. Dynamic Tax (GST) Calculation 🌟
-    let taxAmount = 0;
-    const taxMaster = document.getElementById('tax-master'); // Top configuration checkbox
-    const taxRateField = document.getElementById('tax-rate-field'); // Editable 18% text span
-    
-    // Agar tax wala master checkbox checked ho to hi calculate karein
-    if (taxMaster && taxMaster.checked) {
-        let taxPercent = parseFloat(taxRateField ? taxRateField.innerText : 18) || 0;
-        taxAmount = totalAfterDiscount * (taxPercent / 100);
-        document.getElementById("tax-amount").innerText = taxAmount.toFixed(2);
-    } else {
-        document.getElementById("tax-amount").innerText = "0.00";
-    }
-    
-    // 3. Grand Total (Discount minus aur Tax plus karne ke baad)
-    const grandTotal = totalAfterDiscount + taxAmount; 
-    document.getElementById("total-val").innerText = grandTotal.toFixed(2);
-    
-    // 4. Pending Balance Calculation
-    const paidAmount = parseFloat(document.getElementById("paid").value) || 0;
-    document.getElementById("bal-val").innerText = (grandTotal - paidAmount).toFixed(2);
-}
 
 
     function captureCustomerName() {
@@ -1011,6 +986,10 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
+
+
+
+
     (function(){
         const devInfo = { name: "WasiDevelopers", whatsapp: "923346800959", displayPhone: "0334-6800959" };
         const contactDiv = document.getElementById('wasi-contact');
@@ -1060,7 +1039,7 @@ document.onkeydown = function(e) {
 // 2. ⚠️ STRICT CODE INTEGRITY VERIFICATION (3 SECONDS LOCK)
 (function() {
     // 🌟 AAPKA NEW VERIFIED CODE SIZE: Yahan 4341 set kar diya hai!
-    const CORRECT_HASH_SIGNATURE = 5073; 
+    const CORRECT_HASH_SIGNATURE = 5238; 
 
     const enforceSecurityLock = () => {
         try {
@@ -1082,7 +1061,7 @@ document.onkeydown = function(e) {
 
             // 👇 ALERT KO COMMENT KAR DIYA HAI: Taake baar baar popup na aaye. 
             // Agar kabhi dobara check karna ho to shuru se '//' hata dena.
-              alert("🔥 AAPKA ORIGINAL CODE SIZE: " + currentLength);
+          //    alert("🔥 AAPKA ORIGINAL CODE SIZE: " + currentLength);
 
             // Agar kisi ne code mein tabdeeli ki to character length badal jayegi
             if (currentLength !== CORRECT_HASH_SIGNATURE) {
