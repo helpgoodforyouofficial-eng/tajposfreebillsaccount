@@ -1119,25 +1119,25 @@ document.onkeydown = function(e) {
             let currentStrippedSource = ''; 
             
             const safeFunctions = [];
-            if (typeof calc !== 'undefined') safeFunctions.push(calc);
-            if (typeof addRow !== 'undefined') safeFunctions.push(addRow);
-            if (typeof reIndex !== 'undefined') safeFunctions.push(reIndex);
-            if (typeof applyToggles !== 'undefined') safeFunctions.push(applyToggles);
-            if (typeof logBillToHistory !== 'undefined') safeFunctions.push(logBillToHistory);
-            if (typeof downloadHistoryPDF !== 'undefined') safeFunctions.push(downloadHistoryPDF);
-            if (typeof downloadFile !== 'undefined') safeFunctions.push(downloadFile);
-            if (typeof shareBill !== 'undefined') safeFunctions.push(shareBill);
-            if (typeof autoIncrementBillNo !== 'undefined') safeFunctions.push(autoIncrementBillNo);
-            if (typeof captureCustomerName !== 'undefined') safeFunctions.push(captureCustomerName);
-            if (typeof gtag !== 'undefined') safeFunctions.push(gtag);
-            if (typeof applyPrint !== 'undefined') safeFunctions.push(applyPrint);
-            if (typeof showPrintModal !== 'undefined') safeFunctions.push(showPrintModal);.
-            if (typeof clearAllBillsHistory !== 'undefined') safeFunctions.push(clearAllBillsHistory);
-            if (typeof renderBillsHistory !== 'undefined') safeFunctions.push(renderBillsHistory);
-            if (typeof showDevModal !== 'undefined') safeFunctions.push(showDevModal);
-            if (typeof handleCurrencyChange !== 'undefined') safeFunctions.push(handleCurrencyChange);
-            if (typeof updateCurrencySymbol !== 'undefined') safeFunctions.push(updateCurrencySymbol);
-            
+if (typeof calc !== 'undefined') safeFunctions.push(calc);
+if (typeof addRow !== 'undefined') safeFunctions.push(addRow);
+if (typeof reIndex !== 'undefined') safeFunctions.push(reIndex);
+if (typeof applyToggles !== 'undefined') safeFunctions.push(applyToggles);
+if (typeof logBillToHistory !== 'undefined') safeFunctions.push(logBillToHistory);
+if (typeof downloadHistoryPDF !== 'undefined') safeFunctions.push(downloadHistoryPDF);
+if (typeof downloadFile !== 'undefined') safeFunctions.push(downloadFile);
+if (typeof shareBill !== 'undefined') safeFunctions.push(shareBill);
+if (typeof autoIncrementBillNo !== 'undefined') safeFunctions.push(autoIncrementBillNo);
+if (typeof captureCustomerName !== 'undefined') safeFunctions.push(captureCustomerName);
+if (typeof gtag !== 'undefined') safeFunctions.push(gtag);
+if (typeof applyPrint !== 'undefined') safeFunctions.push(applyPrint);
+if (typeof showPrintModal !== 'undefined') safeFunctions.push(showPrintModal);
+if (typeof clearAllBillsHistory !== 'undefined') safeFunctions.push(clearAllBillsHistory);
+if (typeof renderBillsHistory !== 'undefined') safeFunctions.push(renderBillsHistory);
+if (typeof showDevModal !== 'undefined') safeFunctions.push(showDevModal);
+if (typeof handleCurrencyChange !== 'undefined') safeFunctions.push(handleCurrencyChange);
+if (typeof updateCurrencySymbol !== 'undefined') safeFunctions.push(updateCurrencySymbol);
+
             safeFunctions.forEach(fn => { 
                 currentStrippedSource += fn.toString().replace(/\s+/g,''); 
             });
