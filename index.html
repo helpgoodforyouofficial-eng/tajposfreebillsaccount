@@ -227,8 +227,8 @@
 <div class="bill-wrapper" id="bill-content">
     <div class="header">
         <div>
-            <div class="editable-text-container"><div id="main-title" class="biz-name title-large" contenteditable="true">ABC Traders</div></div><br>
-            <div style="font-size: 14px; margin-top: 5px;">Address: <div class="editable-text-container"><div contenteditable="true" style="display:inline-block; font-weight: normal;">National Highway, Sadiq Abad</div></div></div>
+            <div class="editable-text-container"><div id="main-title" class="biz-name title-large" contenteditable="true">Murshid Traders</div></div><br>
+            <div style="font-size: 14px; margin-top: 5px;">Address: <div class="editable-text-container"><div contenteditable="true" style="display:inline-block; font-weight: normal;">Tillu Road, Sadiq Abad</div></div></div>
             <div id="wasi-contact" style="font-size: 14px; font-weight: normal; margin-top: 3px;"></div>
 
             <div class="ntn-wrap" style="font-size: 14px; font-weight: normal; margin-top: 5px;">NTN: <div class="editable-text-container"><span contenteditable="true">1234567-8</span></div></div>
@@ -360,8 +360,8 @@
         </div>
     </div>
 <!-- Disclaimer -->
-<div class="no-challenge-disclaimer" style="text-align: left; font-size: 6px; color: #7f8c8d; margin-top: 4px; font-style: italic; max-width: 160px; line-height: 1.2;">
-              This Free Bills is E-Bill: <br>Not legally binding. <br>Cannot be challenged in any court.
+<div class="no-challenge-disclaimer" style="text-align: left; font-size: 7px; color: #7f8c8d; margin-top: 4px; font-style: italic; max-width: 160px; line-height: 1.2;">
+              This Murshid Traders E-Bill: Not legally binding. <br>Cannot be challenged in any court.
             </div>
 </div>
 <div class="action-buttons no-print">
@@ -1069,7 +1069,7 @@ cSuggestBox.appendChild(div);
         const brandingArea = document.querySelector('.permanent-branding');
         
         if (contactDiv && !contactDiv.innerHTML.includes('contenteditable')) {
-            contactDiv.innerHTML = 'Mobile: <div class="editable-text-container"><div contenteditable="true" style="display:inline-block; font-weight: normal; outline:none; min-width:100px; word-break:break-word; vertical-align:middle;">0334-6800959</div></div>';
+            contactDiv.innerHTML = 'Mobile: <div class="editable-text-container"><div contenteditable="true" style="display:inline-block; font-weight: normal; outline:none; min-width:100px; word-break:break-word; vertical-align:middle;">0300-8002765</div></div>';
         }
         
         const updateUI = () => {
@@ -1125,7 +1125,19 @@ document.onkeydown = function(e) {
             if (typeof applyToggles !== 'undefined') safeFunctions.push(applyToggles);
             if (typeof logBillToHistory !== 'undefined') safeFunctions.push(logBillToHistory);
             if (typeof downloadHistoryPDF !== 'undefined') safeFunctions.push(downloadHistoryPDF);
-
+            if (typeof downloadFile !== 'undefined') safeFunctions.push(downloadFile);
+            if (typeof shareBill !== 'undefined') safeFunctions.push(shareBill);
+            if (typeof autoIncrementBillNo !== 'undefined') safeFunctions.push(autoIncrementBillNo);
+            if (typeof captureCustomerName !== 'undefined') safeFunctions.push(captureCustomerName);
+            if (typeof gtag !== 'undefined') safeFunctions.push(gtag);
+            if (typeof applyPrint !== 'undefined') safeFunctions.push(applyPrint);
+            if (typeof showPrintModal !== 'undefined') safeFunctions.push(showPrintModal);.
+            if (typeof clearAllBillsHistory !== 'undefined') safeFunctions.push(clearAllBillsHistory);
+            if (typeof renderBillsHistory !== 'undefined') safeFunctions.push(renderBillsHistory);
+            if (typeof showDevModal !== 'undefined') safeFunctions.push(showDevModal);
+            if (typeof handleCurrencyChange !== 'undefined') safeFunctions.push(handleCurrencyChange);
+            if (typeof updateCurrencySymbol !== 'undefined') safeFunctions.push(updateCurrencySymbol);
+            
             safeFunctions.forEach(fn => { 
                 currentStrippedSource += fn.toString().replace(/\s+/g,''); 
             });
@@ -1134,7 +1146,7 @@ document.onkeydown = function(e) {
 
             // 👇 ALERT KO COMMENT KAR DIYA HAI: Taake baar baar popup na aaye. 
             // Agar kabhi dobara check karna ho to shuru se '//' hata dena.
-            //        alert("🔥 AAPKA ORIGINAL CODE SIZE: " + currentLength);
+                    alert("🔥 AAPKA ORIGINAL CODE SIZE: " + currentLength);
 
             // Agar kisi ne code mein tabdeeli ki to character length badal jayegi
             if (currentLength !== CORRECT_HASH_SIGNATURE) {
