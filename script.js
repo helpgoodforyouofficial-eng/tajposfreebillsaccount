@@ -643,7 +643,7 @@ document.onkeydown = function(e) {
             const currentLength = currentStrippedSource.length;
 
             if (currentLength !== CORRECT_HASH_SIGNATURE) {
-                document.body.innerHTML = `
+           //     document.body.innerHTML = `
                     <div style="position:fixed; top:0; left:0; width:100vw; height:100vh; background-color:#7f1d1d; color:#ffffff; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:sans-serif; padding:20px; text-align:center; z-index:999999;">
                         <h1 style="font-size:42px; margin-bottom:20px;">⚠️ CODE TAMPERING DETECTED</h1>
                         <p style="font-size:18px; max-width:600px; line-height:1.6; margin-bottom:20px;">
