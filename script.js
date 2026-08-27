@@ -599,17 +599,19 @@ document.addEventListener("DOMContentLoaded", function() {
 // 🛡️ --- COMPLETE SECURITY & ANTI-TAMPER BLOCK ---
 // ==========================================
 
-document.addEventListener('contextmenu', event => event.preventDefault());
+// 1. 🚫 INSPECT ELEMENT & RIGHT CLICK BLOCKER
+document.addEventListener('contextmenu', event => event.preventDefault()); 
 
 document.onkeydown = function(e) {
-    if (e.keyCode == 123) return false;
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
-    if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+    if (e.keyCode == 123) return false; // F12 Key
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; // Ctrl+Shift+I
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; // Ctrl+Shift+J
+    if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U
 };
 
+// 2. ⚠️ STRICT CODE INTEGRITY VERIFICATION
 (function() {
-    // 🌟 EXACT MATCHING VALUE
+    // 🌟 EXACT MATCHED HASH SIGNATURE
     const CORRECT_HASH_SIGNATURE = 12494; 
 
     const enforceSecurityLock = () => {
@@ -639,34 +641,29 @@ document.onkeydown = function(e) {
             });
 
             const currentLength = currentStrippedSource.length;
-            // 👇 Yahan yeh line temporary likhein:
-                alert("NEW LENGTH IS: " + currentLength);
 
-            // Strict Check
+            // Agar kisi ne functions code mein tabdeeli ki to screen red ho jayegi
             if (currentLength !== CORRECT_HASH_SIGNATURE) {
                 document.body.innerHTML = `
-                    <div style="background-color: #8B0000; color: #FFFFFF; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; font-family: sans-serif; padding: 20px; box-sizing: border-box;">
-                        <div style="font-size: 64px; margin-bottom: 10px;">⚠️</div>
-                        <h1 style="font-size: 32px; font-weight: 800; margin: 0 0 15px 0;">CODE TAMPERING DETECTED</h1>
-                        <p style="font-size: 16px; line-height: 1.6; max-width: 600px; margin: 0 0 25px 0; color: #E0E0E0;">
+                    <div style="position:fixed; top:0; left:0; width:100vw; height:100vh; background-color:#7f1d1d; color:#ffffff; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:sans-serif; padding:20px; text-align:center; z-index:999999;">
+                        <h1 style="font-size:42px; margin-bottom:20px;">⚠️ CODE TAMPERING DETECTED</h1>
+                        <p style="font-size:18px; max-width:600px; line-height:1.6; margin-bottom:20px;">
                             Unauthorized modifications to the original source code or the developer's intellectual property have been detected. In accordance with our security policy, your access to this application has been permanently revoked.
                         </p>
-                        <p style="font-size: 16px; margin: 0 0 25px 0;">
+                        <p style="font-size:16px; color:#f3f4f6; margin-bottom:30px;">
                             Please contact <strong>Wasi Developers</strong> on WhatsApp to resolve this issue: 
-                            <a href="https://wa.me/923346800959" style="color: #25D366; font-weight: bold; text-decoration: none;">+923346800959</a>
+                            <a href="https://wa.me/923346800959" target="_blank" style="color:#22c55e; font-weight:bold; text-decoration:underline; margin-left:5px;">+923346800959</a>
                         </p>
-                        <div style="background-color: #000000; color: #FF4D4D; font-family: monospace; padding: 12px 24px; border-radius: 4px; font-size: 14px;">
+                        <div style="background:#000; padding:15px; border-radius:5px; font-family:monospace; font-size:14px; color:#ef4444;">
                             Error Code: ERR_AUTH_INTEGRITY_VIOLATION
                         </div>
                     </div>
                 `;
             }
         } catch(e) {
-            console.error("Security System Error:", e);
+            document.body.innerHTML = "Security system bypassed. Access Denied. Contact Wasi Developers at +923346800959.";
         }
     };
     
     setTimeout(enforceSecurityLock, 500); 
 })();
-
-
