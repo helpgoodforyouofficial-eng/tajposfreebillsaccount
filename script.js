@@ -612,7 +612,7 @@ document.onkeydown = function(e) {
 // 2. ⚠️ STRICT CODE INTEGRITY VERIFICATION (3 SECONDS LOCK)
 (function() {
     // 🌟 AAPKA NEW VERIFIED CODE SIZE: Yahan 4341 set kar diya hai!
-    const CORRECT_HASH_SIGNATURE = 13011; 
+    const CORRECT_HASH_SIGNATURE = 12494; 
 
     const enforceSecurityLock = () => {
         try {
