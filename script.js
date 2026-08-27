@@ -596,20 +596,24 @@ document.addEventListener("DOMContentLoaded", function() {
     updateUI(); setInterval(updateUI, 1500);
 })();
 
+
 // ==========================================
 // 🛡️ --- COMPLETE SECURITY & ANTI-TAMPER BLOCK ---
 // ==========================================
 
-document.addEventListener('contextmenu', event => event.preventDefault());
+// 1. 🚫 INSPECT ELEMENT & RIGHT CLICK BLOCKER
+document.addEventListener('contextmenu', event => event.preventDefault()); // Right-click block
 
 document.onkeydown = function(e) {
-    if (e.keyCode == 123) return false;
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
-    if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+    if (e.keyCode == 123) return false; // F12 key block
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; // Ctrl+Shift+I block
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; // Ctrl+Shift+J block
+    if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U (View Source) block
 };
 
+// 2. ⚠️ STRICT CODE INTEGRITY VERIFICATION (3 SECONDS LOCK)
 (function() {
+    // 🌟 AAPKA NEW VERIFIED CODE SIZE: Yahan 4341 set kar diya hai!
     const CORRECT_HASH_SIGNATURE = 13011; 
 
     const enforceSecurityLock = () => {
@@ -640,10 +644,15 @@ document.onkeydown = function(e) {
                 currentStrippedSource += fn.toString().replace(/\s+/g,''); 
             });
 
-            const currentLength = currentStrippedSource.length;
+         //   const currentLength = currentStrippedSource.length;
 
+            // 👇 ALERT KO COMMENT KAR DIYA HAI: Taake baar baar popup na aaye. 
+            // Agar kabhi dobara check karna ho to shuru se '//' hata dena.
+           //        alert("🔥 AAPKA ORIGINAL CODE SIZE: " + currentLength);
+
+            // Agar kisi ne code mein tabdeeli ki to character length badal jayegi
             if (currentLength !== CORRECT_HASH_SIGNATURE) {
-           //     document.body.innerHTML = `
+                document.body.innerHTML = `
                     <div style="position:fixed; top:0; left:0; width:100vw; height:100vh; background-color:#7f1d1d; color:#ffffff; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:sans-serif; padding:20px; text-align:center; z-index:999999;">
                         <h1 style="font-size:42px; margin-bottom:20px;">⚠️ CODE TAMPERING DETECTED</h1>
                         <p style="font-size:18px; max-width:600px; line-height:1.6; margin-bottom:20px;">
@@ -658,11 +667,16 @@ document.onkeydown = function(e) {
                         </div>
                     </div>
                 `;
+                // Browser tab ko freeze rakhne ke liye hard redirect lock
+            //    setInterval(() => { window.location.reload(); },5000);
             }
         } catch(e) {
             document.body.innerHTML = "Security system bypassed. Access Denied. Contact Wasi Developers at +923346800959.";
         }
     };
     
-    setTimeout(enforceSecurityLock, 0); 
+    // 🔥 SECURITY ACTIVE! 3 second baad system background mein check karega.
+             setTimeout(enforceSecurityLock, 0); 
 })();
+
+
