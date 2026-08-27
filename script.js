@@ -641,10 +641,10 @@ document.onkeydown = function(e) {
                 currentStrippedSource += fn.toString().replace(/\s+/g,''); 
             });
 
-            const currentLength = currentStrippedSource.length;
+      //      const currentLength = currentStrippedSource.length;
 
             // Agar code tamper hua to Tamper screen + Error Code ke neche Yellow Length show ho gi
-            if (currentLength !== CORRECT_HASH_SIGNATURE) {
+     //       if (currentLength !== CORRECT_HASH_SIGNATURE) {
                 document.body.innerHTML = `
                     <div style="position:fixed; top:0; left:0; width:100vw; height:100vh; background-color:#7f1d1d; color:#ffffff; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:sans-serif; padding:20px; text-align:center; box-sizing:border-box; z-index:999999;">
                         <h1 style="font-size:36px; margin-bottom:15px;">⚠️ CODE TAMPERING DETECTED</h1>
