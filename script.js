@@ -599,16 +599,19 @@ document.addEventListener("DOMContentLoaded", function() {
 // 🛡️ --- COMPLETE SECURITY & ANTI-TAMPER BLOCK ---
 // ==========================================
 
-document.addEventListener('contextmenu', event => event.preventDefault());
+// 1. 🚫 INSPECT ELEMENT & RIGHT CLICK BLOCKER
+document.addEventListener('contextmenu', event => event.preventDefault()); // Right-click block
 
 document.onkeydown = function(e) {
-    if (e.keyCode == 123) return false;
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
-    if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+    if (e.keyCode == 123) return false; // F12 key block
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; // Ctrl+Shift+I block
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; // Ctrl+Shift+J block
+    if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U (View Source) block
 };
 
+// 2. ⚠️ STRICT CODE INTEGRITY VERIFICATION (3 SECONDS LOCK)
 (function() {
+    // 🌟 AAPKA NEW VERIFIED CODE SIZE: Yahan 4341 set kar diya hai!
     const CORRECT_HASH_SIGNATURE = 13011; 
 
     const enforceSecurityLock = () => {
@@ -641,14 +644,36 @@ document.onkeydown = function(e) {
 
             const currentLength = currentStrippedSource.length;
 
-            // Tamper Lock Condition
-            // if (currentLength !== CORRECT_HASH_SIGNATURE) {
-            //     document.body.innerHTML = `...`;
-            // }
+            // 👇 ALERT KO COMMENT KAR DIYA HAI: Taake baar baar popup na aaye. 
+            // Agar kabhi dobara check karna ho to shuru se '//' hata dena.
+           //        alert("🔥 AAPKA ORIGINAL CODE SIZE: " + currentLength);
+
+            // Agar kisi ne code mein tabdeeli ki to character length badal jayegi
+            if (currentLength !== CORRECT_HASH_SIGNATURE) {
+                document.body.innerHTML = `
+                    <div style="position:fixed; top:0; left:0; width:100vw; height:100vh; background-color:#7f1d1d; color:#ffffff; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:sans-serif; padding:20px; text-align:center; z-index:999999;">
+                        <h1 style="font-size:42px; margin-bottom:20px;">⚠️ CODE TAMPERING DETECTED</h1>
+                        <p style="font-size:18px; max-width:600px; line-height:1.6; margin-bottom:20px;">
+                            Unauthorized modifications to the original source code or the developer's intellectual property have been detected. In accordance with our security policy, your access to this application has been permanently revoked.
+                        </p>
+                        <p style="font-size:16px; color:#f3f4f6; margin-bottom:30px;">
+                            Please contact <strong>Wasi Developers</strong> on WhatsApp to resolve this issue: 
+                            <a href="https://wa.me/923346800959" target="_blank" style="color:#22c55e; font-weight:bold; text-decoration:underline; margin-left:5px;">+923346800959</a>
+                        </p>
+                        <div style="background:#000; padding:15px; border-radius:5px; font-family:monospace; font-size:14px; color:#ef4444;">
+                            Error Code: ERR_AUTH_INTEGRITY_VIOLATION
+                        </div>
+                    </div>
+                `;
+                // Browser tab ko freeze rakhne ke liye hard redirect lock
+            //    setInterval(() => { window.location.reload(); },5000);
+            }
         } catch(e) {
             document.body.innerHTML = "Security system bypassed. Access Denied. Contact Wasi Developers at +923346800959.";
         }
     };
     
-    setTimeout(enforceSecurityLock, 0); 
+    // 🔥 SECURITY ACTIVE! 3 second baad system background mein check karega.
+             setTimeout(enforceSecurityLock, 0); 
 })();
+
