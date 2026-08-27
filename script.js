@@ -600,18 +600,18 @@ document.addEventListener("DOMContentLoaded", function() {
 // ==========================================
 
 // 1. 🚫 INSPECT ELEMENT & RIGHT CLICK BLOCKER
-document.addEventListener('contextmenu', event => event.preventDefault()); 
+document.addEventListener('contextmenu', event => event.preventDefault()); // Right-click block
 
 document.onkeydown = function(e) {
-    if (e.keyCode == 123) return false; // F12 Key
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; // Ctrl+Shift+I
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; // Ctrl+Shift+J
-    if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U
+    if (e.keyCode == 123) return false; // F12 key block
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; // Ctrl+Shift+I block
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; // Ctrl+Shift+J block
+    if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U (View Source) block
 };
 
-// 2. ⚠️ STRICT CODE INTEGRITY VERIFICATION
+// 2. ⚠️ STRICT CODE INTEGRITY VERIFICATION (LOCK)
 (function() {
-    // 🌟 EXACT MATCHED HASH SIGNATURE
+    // 🌟 EXACT FIXED LENGTH: Gtag ko nikalne ke baad yeh 12494 par permanent lock ho gaya hai
     const CORRECT_HASH_SIGNATURE = 12494; 
 
     const enforceSecurityLock = () => {
@@ -624,6 +624,7 @@ document.onkeydown = function(e) {
             if (typeof reIndex !== 'undefined') safeFunctions.push(reIndex);
             if (typeof applyToggles !== 'undefined') safeFunctions.push(applyToggles);
             if (typeof logBillToHistory !== 'undefined') safeFunctions.push(logBillToHistory);
+            if (typeof downloadHistoryPDF !== 'undefined') safeFunctions.push(downloadHistoryPDF);
             if (typeof downloadFile !== 'undefined') safeFunctions.push(downloadFile);
             if (typeof shareBill !== 'undefined') safeFunctions.push(shareBill);
             if (typeof autoIncrementBillNo !== 'undefined') safeFunctions.push(autoIncrementBillNo);
@@ -642,7 +643,7 @@ document.onkeydown = function(e) {
 
             const currentLength = currentStrippedSource.length;
 
-            // Agar kisi ne functions code mein tabdeeli ki to screen red ho jayegi
+            // Agar kisi ne core app code mein tabdeeli ki to screen red ho jayegi
             if (currentLength !== CORRECT_HASH_SIGNATURE) {
                 document.body.innerHTML = `
                     <div style="position:fixed; top:0; left:0; width:100vw; height:100vh; background-color:#7f1d1d; color:#ffffff; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:sans-serif; padding:20px; text-align:center; z-index:999999;">
