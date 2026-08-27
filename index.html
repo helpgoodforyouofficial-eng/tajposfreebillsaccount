@@ -6,144 +6,26 @@
     <title>Ultimate Universal Bill Generator</title>
     
     <!-- PWA Meta Tags & Manifest Link -->
-    
     <meta name="theme-color" content="#2c3e50">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
 
+    <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
-    <style>
-        :root { --primary: #2c3e50; --bg: #f4f7f6; --accent: #27ae60; --share: #3498db; --print: #8e44ad; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); margin: 0; padding: 5px; }
-        
-        .admin-panel { 
-            max-width: 850px; margin: 0 auto 15px; background: #fff; padding: 15px; 
-            border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 5px solid var(--primary);
-        }
-        .config-grid { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
-        .config-item { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: bold; }
+    <!-- Custom CSS Link -->
+    <link rel="stylesheet" href="style.css">
 
-        .bill-wrapper { 
-            max-width: 800px; margin: auto; background: #fff; padding: 30px; 
-            border: 1px solid #ddd; min-height: auto; position: relative;
-            overflow: visible; box-sizing: border-box;
-        }
-        
-        .header { display: flex; justify-content: space-between; border-bottom: 3px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
-        
-        .title-normal { font-size: 22px; }
-        .title-medium { font-size: 28px; }
-        .title-large { font-size: 35px; }
-        .biz-name { font-weight: bold; color: var(--primary); outline: none; word-break: break-word; }
-        
-        table { width: 100%; border-collapse: collapse; margin: 15px 0; border: 1px solid #333; font-size: 14px; }
-        th { background: #f8f9fa; border: 1px solid #333; padding: 10px; font-size: 12px; }
-        td { border: 1px solid #333; padding: 8px 5px; position: relative; vertical-align: middle; line-height: 1.4; }
-        
-        .delete-btn { color: red; background: none; border: none !important; cursor: pointer; font-weight: bold; font-size: 14px; }
-
-        input, select { 
-            border: none; width: 100%; outline: none; background: transparent; 
-            font-size: 14px; padding: 0 2px 2px 2px; 
-            height: 30px; line-height: 30px; 
-            display: inline-block; vertical-align: middle;
-        }
-        input:focus { background: #fffde7; }
-
-        /* --- Pencil Icons Styling --- */
-        .editable-text-container { position: relative; display: inline-flex; align-items: center; padding-right: 18px; }
-        .editable-text-container::after { 
-            content: "✏️"; position: absolute; right: 0; top: 50%; transform: translateY(-50%); 
-            font-size: 11px; opacity: 0.6; pointer-events: none; 
-            display: var(--show-pencil, block);
-        }
-        .editable-input-container { position: relative; display: block; width: 100%; }
-        .editable-input-container::after { 
-            content: "✏️"; position: absolute; right: 5px; top: 50%; transform: translateY(-50%); 
-            font-size: 11px; opacity: 0.5; pointer-events: none; 
-            display: var(--show-pencil, block);
-        }
-
-        .item-input { padding-right: 20px !important; box-sizing: border-box; }
-
-        .suggestion-container { position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #ccc; box-shadow: 0 4px 8px rgba(0,0,0,0.2); z-index: 9999; display: none; max-height: 150px; overflow-y: auto; }
-        .suggestion-item { padding: 8px 10px; cursor: pointer; border-bottom: 1px solid #eee; font-size: 13px; color: #333; text-align: left; }
-        .suggestion-item:hover { background: #f0f0f0; }
-
-        .action-buttons { max-width: 800px; margin: 20px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .btn { padding: 12px 5px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; color: white; text-align: center; font-size: 12px; }
-        .btn-pdf { background: #e74c3c; }
-        .btn-jpg { background: var(--accent); }
-        .btn-share { background: var(--share); }
-        .btn-print { background: var(--print); }
-        .btn-add { background: var(--primary); color: white; margin-top: 10px; padding: 10px 15px; border-radius: 4px; border: none; cursor: pointer; width: 100%; }
-
-        .summary-box { display: flex; justify-content: flex-end; margin-top: 15px; padding-bottom: 20px; }
-        .sum-table { width: 100%; max-width: 300px; border: none; }
-        .sum-table td { border: none !important; padding: 6px 10px; text-align: right; white-space: nowrap; line-height: 1.5; }
-
-        .footer-area { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px; flex-wrap: wrap; gap: 20px; padding-bottom: 20px; }
-        #qrcode { margin-bottom: 5px; }
-        .permanent-branding { font-size: 10px; color: #555; text-align: left; margin-top: 5px; font-weight: bold; }
-
-        .modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
-        .modal-content { background: #fff; margin: 15% auto; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; }
-        
-        /* --- Record Section Styling --- */
-        .record-panel { max-width: 800px; margin: 30px auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 5px solid var(--share); }
-        .record-table { font-size: 13px; margin-top: 10px; }
-        .record-table th { background: #2c3e50; color: white; border: 1px solid #ddd; }
-        .record-table td { border: 1px solid #ddd; padding: 6px; text-align: left; vertical-align: middle; }
-        .prod-tag { display: inline-block; background: #eef2f3; color: #333; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin: 2px; border: 1px solid #ccc; }
-
-        /* Forces desktop style inside snapshot/PC rendering without stack structure */
-        .force-pc-layout {
-            width: 800px !important;
-            max-width: 800px !important;
-            padding: 30px !important;
-        }
-        .force-pc-layout .header { flex-direction: row !important; text-align: left !important; gap: 0 !important; }
-        .force-pc-layout .header div { text-align: left !important; }
-        .force-pc-layout .header div:last-child { text-align: right !important; }
-
-       @media (max-width: 600px) {
-            .header { flex-direction: column; text-align: left; gap: 15px; }
-            .header div { text-align: left !important; }
-            /* Mobile par INVOICE, Date aur Bill No ko right side par barkarar rakhne ke liye */
-            .header > div:last-child, .header > div:last-child * { text-align: right !important; justify-content: flex-end !important; align-items: flex-end !important; }
-            /* Customer aur Address fields ko mobile view mein zabardasti left alignment dene ke liye */
-            .customer-info-wrap, .customer-info-wrap * { text-align: left !important; justify-content: flex-start !important; }
-            .action-buttons { grid-template-columns: 1fr; }
-            .bill-wrapper { padding: 15px; }
-            input { font-size: 13px; } 
-        }
-
-
-        /* --- Print Control Layout --- */
-        @media print {
-            .no-print, .admin-panel, .btn-add, .action-buttons, .modal, .rt-col-action, .record-panel { display: none !important; }
-            body { background: #fff; padding: 0; margin: 0; }
-            .bill-wrapper { border: none !important; box-shadow: none !important; padding: 0px; margin: 0 auto; overflow: visible !important; }
-            .bill-wrapper .header { flex-direction: row !important; text-align: left !important; gap: 0 !important; }
-            .bill-wrapper .header div { text-align: left !important; }
-            .bill-wrapper .header div:last-child { text-align: right !important; }
-            table, th, td { border: 1px solid #000 !important; }
-            .editable-text-container::after, .editable-input-container::after { display: none !important; }
-            .editable-text-container { padding-right: 0 !important; }
-            @page { margin: 0.5cm; }
-        }
-    </style>
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-10843713009"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'AW-10843713009');
-</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-10843713009"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-10843713009');
+    </script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-MM1128NLL1"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -162,14 +44,13 @@
         <label><input type="radio" name="tsize" value="title-medium" onclick="updateTitleSize(this.value)"> Medium</label>
         <label><input type="radio" name="tsize" value="title-large" checked onclick="updateTitleSize(this.value)"> Large</label>
     </div>
-            <div class="config-grid">
+    <div class="config-grid">
         <label class="config-item"><input type="checkbox" class="toggle" data-target="date-wrap" checked style="transform: scale(1.25); margin-right: 5px; cursor: pointer;"> Show Date</label>
         <label class="config-item"><input type="checkbox" class="toggle" data-target="time-wrap" checked style="transform: scale(1.25); margin-right: 5px; cursor: pointer;"> Show Time</label>
         <label class="config-item"><input type="checkbox" class="toggle" data-target="ntn-wrap" style="transform: scale(1.25); margin-right: 5px; cursor: pointer;"> Show NTN</label>
         <label class="config-item"><input type="checkbox" class="toggle" data-target="col-disc" id="disc-master" style="transform: scale(1.25); margin-right: 5px; cursor: pointer;"> Discount</label>
         <label class="config-item"><input type="checkbox" class="toggle" data-target="tax-row" id="tax-master" style="transform: scale(1.25); margin-right: 5px; cursor: pointer;"> Tax (GST)</label>
         <label class="config-item"><input type="checkbox" class="toggle" data-target="note-row" id="note-master" style="transform: scale(1.25); margin-right: 5px; cursor: pointer;"> Show Note</label>
-  
 
         <span class="config-item">Paper Size:
             <select id="topPageSize" onchange="syncPaperSize(this.value)" style="width: 130px; padding: 4px; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; background: white; height: auto;">
@@ -219,7 +100,6 @@
                 <option value="custom">-- Add New/Custom --</option>
             </select>
         </span>
-         <!-- Yahan par version badge add kiya hai taake pata chale naya code aa gaya hai -->
         <span style="background: #e74c3c; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-left: 10px;">v73</span>
     </div>
 </div>
@@ -233,7 +113,7 @@
 
             <div class="ntn-wrap" style="font-size: 14px; font-weight: normal; margin-top: 5px;">NTN: <div class="editable-text-container"><span contenteditable="true">1234567-8</span></div></div>
             
-                        <div class="customer-info-wrap" style="margin-top: 15px; font-size: 14px; text-align: left; border-top: 1px dashed #eee; padding-top: 10px; display: flex; flex-direction: column; gap: 5px; width: 100%;">
+            <div class="customer-info-wrap" style="margin-top: 15px; font-size: 14px; text-align: left; border-top: 1px dashed #eee; padding-top: 10px; display: flex; flex-direction: column; gap: 5px; width: 100%;">
                 <div style="display: flex; align-items: center; gap: 4px; width: 100%;">
                     <span>Customer:</span> 
                     <div class="editable-text-container" style="font-weight: bold; flex: 1; display: block; text-align: left;">
@@ -242,10 +122,9 @@
                 </div>
                 <div style="display: flex; align-items: center; gap: 4px; width: 100%;">
                     <span>Address:</span> 
-<div class="editable-text-container" style="display: inline-block !important; vertical-align: middle; margin-left: 5px;">
-    <div id="cust-address-field" contenteditable="true" style="display: inline-block !important; font-weight: normal; border-bottom: 1px dotted #ccc; text-align: left !important; min-width: 100px; outline: none; direction: ltr;">#</div>
-</div>
-                    
+                    <div class="editable-text-container" style="display: inline-block !important; vertical-align: middle; margin-left: 5px;">
+                        <div id="cust-address-field" contenteditable="true" style="display: inline-block !important; font-weight: normal; border-bottom: 1px dotted #ccc; text-align: left !important; min-width: 100px; outline: none; direction: ltr;">#</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -281,74 +160,65 @@
     <button class="btn-add no-print" onclick="addRow()">+ Add New Item</button>
     
     <div class="summary-box">
-    <table class="sum-table">
-        <tr>
-            <td>Sub Total:</td>
-            <td><span class="cur">Rs</span> <span id="sub-val">0.00</span></td>
-        </tr>
-        
-        <tr class="col-disc" style="color: green; display: none;">
-            <td>Discount:</td>
-            <td>- <span id="disc-amt">0.00</span></td>
-        </tr>
+        <table class="sum-table">
+            <tr>
+                <td>Sub Total:</td>
+                <td><span class="cur">Rs</span> <span id="sub-val">0.00</span></td>
+            </tr>
+            
+            <tr class="col-disc" style="color: green; display: none;">
+                <td>Discount:</td>
+                <td>- <span id="disc-amt">0.00</span></td>
+            </tr>
 
-        <tr class="tax-row" style="color: #c0392b; display: none;">
-            <td>
-                Tax (GST <span id="tax-rate-field" contenteditable="true" style="border-bottom: 1px dashed #c0392b; padding: 0 2px; outline: none; font-weight: bold; display: inline-block;">2.5</span>% 
-                <span class="no-print" style="font-size: 0.85em; color: #888; margin-left: 2px; cursor: pointer;">✏️</span>):
-            </td>
-            <td>+ <span id="tax-amount">0.00</span></td>
-        </tr>
+            <tr class="tax-row" style="color: #c0392b; display: none;">
+                <td>
+                    Tax (GST <span id="tax-rate-field" contenteditable="true" style="border-bottom: 1px dashed #c0392b; padding: 0 2px; outline: none; font-weight: bold; display: inline-block;">2.5</span>% 
+                    <span class="no-print" style="font-size: 0.85em; color: #888; margin-left: 2px; cursor: pointer;">✏️</span>):
+                </td>
+                <td>+ <span id="tax-amount">0.00</span></td>
+            </tr>
 
-        <tr style="font-weight:bold; font-size:1.25em; border-top: 2px solid #333;">
-            <td>Grand Total:</td>
-            <td><span class="cur">Rs</span> <span id="total-val">0.00</span></td>
-        </tr>
+            <tr style="font-weight:bold; font-size:1.25em; border-top: 2px solid #333;">
+                <td>Grand Total:</td>
+                <td><span class="cur">Rs</span> <span id="total-val">0.00</span></td>
+            </tr>
 
-        <!-- 🆕 EDITABLE PREVIOUS BALANCE BOX -->
-        <tr style="color: #7f8c8d; font-weight: bold;">
-            <td>Previous Balance:</td>
-            <td>
-                <div class="editable-text-container" style="padding-right:15px;">
-                    <input type="number" id="prev-bal-val" value="0" oninput="calc()" style="text-align:right; font-weight:bold; width:95px; height:30px; line-height:30px; padding-bottom:2px; display:inline-block; vertical-align:middle; color: #7f8c8d;" onclick="this.select()">
-                </div>
-            </td>
-        </tr>
+            <tr style="color: #7f8c8d; font-weight: bold;">
+                <td>Previous Balance:</td>
+                <td>
+                    <div class="editable-text-container" style="padding-right:15px;">
+                        <input type="number" id="prev-bal-val" value="0" oninput="calc()" style="text-align:right; font-weight:bold; width:95px; height:30px; line-height:30px; padding-bottom:2px; display:inline-block; vertical-align:middle; color: #7f8c8d;" onclick="this.select()">
+                    </div>
+                </td>
+            </tr>
 
-        <tr>
-            <td>Received:</td>
-            <td>
-                <div class="editable-text-container" style="padding-right:15px;">
-                    <input type="number" id="paid" value="0" oninput="calc()" style="text-align:right; font-weight:bold; width:95px; height:30px; line-height:30px; padding-bottom:2px; display:inline-block; vertical-align:middle;" onclick="this.select()">
-                </div>
-            </td>
-        </tr>
-        <tr style="color:red; font-weight:bold;">
-            <td>Total Pending Balance:</td>
-            <td><span class="cur">Rs</span> <span id="bal-val">0.00</span></td>
-        </tr>
-    </table>    
-</div>
-
-
-
-
-<!-- 📝 MULTI-LANGUAGE ADJUSTABLE NOTE BOX (FIXED MIN-WIDTH & RTL/LTR SENSOR) -->
-<div class="note-row" style="position: absolute; left: 190px; right: 210px; bottom: 10px; display: none; padding-left: 10px; padding-right: 10px; padding-top: 5px; padding-bottom: 5px; box-sizing: border-box;">
-    <!-- Title Section (Isme bhi text-align: start hai taake heading bhi language ke hisab se shift ho sake) -->
-    <div dir="auto" style="font-weight: bold; font-size: 11px; color: #555; margin-bottom: 2px; text-align: start;">
-        Note / Terms: <span class="no-print" style="font-size: 0.85em; color: #888; margin-left: 2px; cursor: pointer;">✏️</span>
+            <tr>
+                <td>Received:</td>
+                <td>
+                    <div class="editable-text-container" style="padding-right:15px;">
+                        <input type="number" id="paid" value="0" oninput="calc()" style="text-align:right; font-weight:bold; width:95px; height:30px; line-height:30px; padding-bottom:2px; display:inline-block; vertical-align:middle;" onclick="this.select()">
+                    </div>
+                </td>
+            </tr>
+            <tr style="color:red; font-weight:bold;">
+                <td>Total Pending Balance:</td>
+                <td><span class="cur">Rs</span> <span id="bal-val">0.00</span></td>
+            </tr>
+        </table>    
     </div>
-    
-    <!-- Note Content (min-width, dir="auto", aur text-align: start ke sath) -->
-    <div id="note-body" contenteditable="true" dir="auto" style="border: 1px dashed #ccc; padding: 6px; border-radius: 4px; font-size: 11px; min-height: 40px; min-width: 250px; width: fit-content; max-width: 100%; color: #333; outline: none; background: rgba(250, 250, 250, 0.95); line-height: 1.3; white-space: normal; text-align: start; word-wrap: break-word; word-break: break-word; overflow-wrap: break-word;" placeholder="Write note...">1. Please clear the bill amount within 7 days.
+
+    <div class="note-row" style="position: absolute; left: 190px; right: 210px; bottom: 10px; display: none; padding-left: 10px; padding-right: 10px; padding-top: 5px; padding-bottom: 5px; box-sizing: border-box;">
+        <div dir="auto" style="font-weight: bold; font-size: 11px; color: #555; margin-bottom: 2px; text-align: start;">
+            Note / Terms: <span class="no-print" style="font-size: 0.85em; color: #888; margin-left: 2px; cursor: pointer;">✏️</span>
+        </div>
+        
+        <div id="note-body" contenteditable="true" dir="auto" style="border: 1px dashed #ccc; padding: 6px; border-radius: 4px; font-size: 11px; min-height: 40px; min-width: 250px; width: fit-content; max-width: 100%; color: #333; outline: none; background: rgba(250, 250, 250, 0.95); line-height: 1.3; white-space: normal; text-align: start; word-wrap: break-word; word-break: break-word; overflow-wrap: break-word;" placeholder="Write note...">1. Please clear the bill amount within 7 days.
 2. Kindly check the expiry of the items on the spot.
 3. The distribution is not responsible for any personal transactions with the salesman.
 4. For expired items claim, please inform us 1 month in advance.
 </div>
-</div>
-
-
+    </div>
 
     <div class="footer-area">
         <div class="qr-section">
@@ -359,11 +229,12 @@
             <div style="width: 150px; border-top: 1.2px solid #333; padding-top: 8px; font-weight: bold; margin-top:30px;">Signature</div>
         </div>
     </div>
-<!-- Disclaimer -->
-<div class="no-challenge-disclaimer" style="text-align: left; font-size: 7px; color: #7f8c8d; margin-top: 4px; font-style: italic; max-width: 160px; line-height: 1.2;">
-              This Free Bills E-Bill: Not legally binding. <br>Cannot be challenged in any court.
-            </div>
+
+    <div class="no-challenge-disclaimer" style="text-align: left; font-size: 7px; color: #7f8c8d; margin-top: 4px; font-style: italic; max-width: 160px; line-height: 1.2;">
+        This Free Bills E-Bill: Not legally binding. <br>Cannot be challenged in any court.
+    </div>
 </div>
+
 <div class="action-buttons no-print">
     <button class="btn btn-pdf" onclick="downloadFile('pdf')">Save PDF</button>
     <button class="btn btn-jpg" onclick="downloadFile('jpg')">Save JPG</button>
@@ -372,7 +243,6 @@
     <button class="btn" style="background: #2c3e50; grid-column: span 2;" onclick="showDevModal()">Developer Information</button>
 </div>
 
-<!-- --- Updated History Dashboard Panel --- -->
 <div class="record-panel no-print">
     <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #eee; padding-bottom:10px; margin-bottom:15px;">
         <h3 style="margin:0; color: var(--primary);">📋 Saved Bills History / Ledger</h3>
@@ -429,754 +299,14 @@
     </div>
 </div>
 
-<script>
-// --- PWA Service Worker Registration & Prompt Logic ---
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log('Service Worker registered!'))
-        .catch(err => console.log('Service Worker registration failed: ', err));
-    });
-}
-
-let deferredPrompt;
-
-// 1. Jab browser install karne ke liye ready ho
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    
-    const installBanner = document.getElementById('pwa-install-btn');
-    if (installBanner) {
-        installBanner.style.setProperty('display', 'flex', 'important'); 
-    }
-});
-
-// 2. Click handle karne ke liye jab page poora tayyar ho jaye
-document.addEventListener("DOMContentLoaded", function() {
-    // Click event hum banner ke andar maujood actual button par lagayein ge
-    const actualBtn = document.getElementById('pwa-actual-install-click');
-    const installBanner = document.getElementById('pwa-install-btn');
-    
-    if (actualBtn) {
-        actualBtn.addEventListener('click', async () => {
-            if (!deferredPrompt) return;
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            console.log(`User response to the install prompt: ${outcome}`);
-            deferredPrompt = null;
-            if (installBanner) installBanner.style.setProperty('display', 'none', 'important');
-        });
-    }
-
-    // TESTING / FORCE SHOW: Layout check karne ke liye niche wali line se '//' hatayein
-    // if(installBanner) installBanner.style.setProperty('display', 'flex', 'important');
-});
-
-// 3. Jab app successfully install ho jaye
-window.addEventListener('appinstalled', (evt) => {
-    console.log('PWA was successfully installed!');
-    const installBanner = document.getElementById('pwa-install-btn');
-    if (installBanner) {
-        installBanner.style.setProperty('display', 'none', 'important');
-    }
-});
-
-
-// --- Initializations & Variables ---
-let savedItems = JSON.parse(localStorage.getItem("inventory")) || [];
-let savedCustomers = JSON.parse(localStorage.getItem("customer_profiles")) || [{"name": "Counter Sale", "address": "#"}];
-let savedBillsLog = JSON.parse(localStorage.getItem("bills_history_log")) || [];
-
-// --- Functions ---
-function syncPaperSize(val) {
-    const pageSizeEl = document.getElementById('pageSize');
-    const topCustomDimsEl = document.getElementById('topCustomDims');
-    const customDimsEl = document.getElementById('customDims');
-    
-    if(pageSizeEl) pageSizeEl.value = val;
-    if(topCustomDimsEl) topCustomDimsEl.style.display = val === 'custom' ? 'inline-block' : 'none';
-    if(customDimsEl) customDimsEl.style.display = val === 'custom' ? 'block' : 'none';
-}
-
-// QR Code Initialization
-if(document.getElementById("qrcode")) {
-    (function(siteUrl){
-        new QRCode(document.getElementById("qrcode"), { text: siteUrl, width: 60, height: 60 });
-    })("https://freebills.netlify.app/");
-}
-
-function updateTitleSize(sizeValue){
-    const mainTitleEl = document.getElementById("main-title");
-    if(mainTitleEl) {
-        mainTitleEl.className = "biz-name " + sizeValue;
-    }
-}
-
-    
-    
-    function updateCurrencySymbol(symbol) {
-        document.querySelectorAll('.cur').forEach(el => { el.innerText = symbol; });
-    }
-
-    function handleCurrencyChange(selectedValue) {
-        if (selectedValue === 'custom') {
-            let customSymbol = prompt("Enter Country or Currency symbol:", "");
-            if (customSymbol && customSymbol.trim() !== "") {
-                let selectBox = document.getElementById('currency');
-                let newOption = document.createElement('option');
-                newOption.value = customSymbol; newOption.text = customSymbol; newOption.selected = true;
-                selectBox.add(newOption, selectBox.options[selectBox.options.length - 1]);
-                updateCurrencySymbol(customSymbol);
-            } else {
-                document.getElementById('currency').value = 'Rs';
-                updateCurrencySymbol('Rs');
-            }
-        } else { updateCurrencySymbol(selectedValue); }
-    }
-
-    function addRow() {
-        const tbody = document.getElementById('items');
-        const tr = document.createElement('tr');
-        const rowCount = tbody.rows.length + 1;
-
-        tr.innerHTML = `
-            <td>${rowCount}</td>
-            <td>
-                <div class="editable-input-container">
-                    <input type="text" placeholder="Item Name..." class="item-input" autocomplete="off">
-                </div>
-                <div class="suggestion-container"></div>
-            </td>
-            <td><div class="editable-input-container"><input type="number" class="q" value="1" oninput="calc()" onclick="this.select()" style="text-align:center; font-weight:bold;"></div></td>
-            <td><div class="editable-input-container"><input type="number" class="r" value="0" oninput="calc()" onclick="this.select()" style="text-align:right; font-weight:bold;"></div></td>
-            <td class="col-disc"><div class="editable-input-container"><input type="number" class="d" value="0" oninput="calc()" onclick="this.select()" style="text-align:right; font-weight:bold;"></div></td>
-            <td style="text-align:right; font-weight:bold;" class="rt">0.00</td>
-            <td class="no-print rt-col-action">
-                <button class="delete-btn" onclick="this.parentElement.parentElement.remove(); reIndex(); calc();">✖</button>
-            </td>`;
-        
-        tbody.appendChild(tr);
-        
-        const input = tr.querySelector('.item-input');
-        const suggestBox = tr.querySelector('.suggestion-container');
-
-        input.addEventListener('input', function() {
-            const val = this.value.toLowerCase();
-            suggestBox.innerHTML = '';
-            if (val.length > 0) {
-                const matches = savedItems.filter(i => i.toLowerCase().includes(val));
-                if (matches.length > 0) {
-                    suggestBox.style.display = 'block';
-                    matches.forEach(m => {
-                        const div = document.createElement('div');
-                        div.className = 'suggestion-item'; div.innerText = m;
-                        div.onclick = function() { input.value = m; suggestBox.style.display = 'none'; calc(); };
-                        suggestBox.appendChild(div);
-                    });
-                } else { suggestBox.style.display = 'none'; }
-            } else { suggestBox.style.display = 'none'; }
-            calc();
-        });
-
-        input.addEventListener('blur', function() {
-            setTimeout(() => { suggestBox.style.display = 'none'; }, 200);
-            const val = this.value.trim();
-            if (val && !savedItems.includes(val)) {
-                savedItems.push(val);
-                localStorage.setItem('inventory', JSON.stringify(savedItems));
-            }
-        });
-
-        input.focus(); applyToggles(); calc();
-    }
-
-    function reIndex() {
-        document.querySelectorAll("#items tr").forEach(function(row, idx) { 
-            row.cells[0].innerText = idx + 1; 
-        });
-    }
-
-    function calc() {
-    let subTotal = 0, discountTotal = 0;
-    
-    // 🟢 DISCOUNT MASTER CHECKBOX DETECTION
-    const discMaster = document.getElementById('disc-master');
-    const isDiscountActive = discMaster ? discMaster.checked : false;
-
-    // 1. Har item ki calculation
-    document.querySelectorAll("#items tr").forEach(row => {
-        const qty = parseFloat(row.querySelector(".q").value) || 0;
-        const rate = parseFloat(row.querySelector(".r").value) || 0;
-        
-        // Agar discount unchecked hai, to item-level disc zero (0) tasawwur ho
-        const disc = isDiscountActive ? (parseFloat(row.querySelector(".d").value) || 0) : 0;
-        
-        const total = (qty * rate) - disc;
-        
-        row.querySelector(".rt").innerText = total.toFixed(2); 
-        subTotal += (qty * rate); 
-        discountTotal += disc;
-    });
-    
-    // Values ko UI par show karna
-    document.getElementById("sub-val").innerText = subTotal.toFixed(2);
-    
-    // Discount display reset if unchecked
-    const discAmtField = document.getElementById("disc-amt");
-    if (discAmtField) {
-        discAmtField.innerText = discountTotal.toFixed(2);
-    }
-
-    // 2. TAX LOGIC WITH LIVE UNCHECK / CHANGE SENSOR
-    let taxAmount = 0;
-    const taxMaster = document.getElementById('tax-master');
-    const taxRateField = document.getElementById('tax-rate-field');
-    const taxAmountField = document.getElementById('tax-amount');
-
-    if (taxMaster && taxMaster.checked && taxRateField) {
-        const taxPercent = parseFloat(taxRateField.innerText) || parseFloat(taxRateField.value) || 0;
-        const taxableAmount = subTotal - discountTotal;
-        taxAmount = (taxableAmount * taxPercent) / 100;
-    }
-
-    if (taxAmountField) {
-        taxAmountField.innerText = taxAmount.toFixed(2);
-    }
-
-    // 3. GRAND TOTAL CALCULATION (SubTotal - Discount + Tax)
-    const grandTotal = (subTotal - discountTotal) + taxAmount;
-    document.getElementById("total-val").innerText = grandTotal.toFixed(2);
-
-    // 🆕 4. FETCH PREVIOUS BALANCE FROM INPUT VALUE (Live Layer Fix)
-    const prevBalField = document.getElementById("prev-bal-val");
-    const previousBalance = prevBalField ? (parseFloat(prevBalField.value) || 0) : 0;
-
-    // 5. TOTAL PENDING BALANCE CALCULATION (Grand Total + Previous Balance - Paid)
-    const paidInput = document.getElementById("paid");
-    const paid = parseFloat(paidInput ? paidInput.value : 0) || 0;
-    const balance = (grandTotal + previousBalance) - paid;
-    
-    const balValField = document.getElementById("bal-val");
-    if (balValField) {
-        balValField.innerText = balance.toFixed(2);
-    }
-}
-
-
-
-
-
-
-
-    function captureCustomerName() {
-        const custSpan = document.getElementById("cust-name-field");
-        const addrDiv = document.getElementById("cust-address-field");
-        if (custSpan && addrDiv) {
-            const custName = custSpan.innerText.trim();
-            const custAddr = addrDiv.innerText.trim();
-            if (custName && custName !== "" && custName !== "Counter Sale") {
-                const existingIdx = savedCustomers.findIndex(c => c.name.toLowerCase() === custName.toLowerCase());
-                if (existingIdx > -1) {
-                    savedCustomers[existingIdx].address = custAddr;
-                } else {
-                    savedCustomers.push({ name: custName, address: custAddr });
-                }
-                localStorage.setItem("customer_profiles", JSON.stringify(savedCustomers));
-            }
-        }
-    }
-
-    // --- Updated Bill Logging Logic with Paid/Balance ---
-    function logBillToHistory() {
-        const billNo = document.getElementById("bill-no").innerText.trim();
-        const customer = document.getElementById("cust-name-field").innerText.trim();
-        const dateVal = document.getElementById("date-field").value;
-        const totalAmount = document.getElementById("total-val").innerText;
-        const paidAmount = parseFloat(document.getElementById("paid").value) || 0;
-        const balanceAmount = document.getElementById("bal-val").innerText;
-        const currencySymbol = document.querySelector('.cur').innerText;
-
-        let products = [];
-        document.querySelectorAll("#items tr").forEach(row => {
-            const name = row.querySelector(".item-input").value.trim();
-            const qty = row.querySelector(".q").value;
-            const rate = row.querySelector(".r").value;
-            if(name) {
-                products.push(`${name} (${qty}x${rate})`);
-            }
-        });
-
-        // Duplicate entry check blocking
-        if(savedBillsLog.some(b => b.billNo === billNo && b.customer === customer && b.totalAmount === (currencySymbol + " " + totalAmount))) {
-            return; 
-        }
-
-        const newLog = { 
-            billNo, 
-            customer, 
-            dateVal, 
-            products, 
-            totalAmount: currencySymbol + " " + totalAmount,
-            paidAmount: currencySymbol + " " + paidAmount.toFixed(2),
-            balanceAmount: currencySymbol + " " + balanceAmount
-        };
-        savedBillsLog.unshift(newLog); // Naya bill top pe dikhega
-        localStorage.setItem("bills_history_log", JSON.stringify(savedBillsLog));
-        renderBillsHistory();
-    }
-
-    function renderBillsHistory() {
-        const tbody = document.getElementById("bill-history-rows");
-        if (savedBillsLog.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#999; padding:20px;">No bill records found yet. Save/Print a bill to log details.</td></tr>`;
-            return;
-        }
-
-        tbody.innerHTML = "";
-        savedBillsLog.forEach(b => {
-            const tr = document.createElement("tr");
-            let prodHTML = b.products.map(p => `<span class="prod-tag">${p}</span>`).join(" ");
-            
-            // Checking if balance is positive to highlight in red
-            const isPending = parseFloat(b.balanceAmount.replace(/[^0-9.-]/g, '')) > 0;
-            const balStyle = isPending ? "font-weight:bold; color:red; text-align:right;" : "font-weight:bold; color:#777; text-align:right;";
-
-            tr.innerHTML = `
-                <td style="font-weight:bold; color:#2c3e50;">${b.billNo}</td>
-                <td style="font-weight:600;">${b.customer}</td>
-                <td>${b.dateVal}</td>
-                <td>${prodHTML || '<i style="color:#aaa;">No Products</i>'}</td>
-                <td style="font-weight:bold; color:#2c3e50; text-align:right;">${b.totalAmount}</td>
-                <td style="font-weight:bold; color:#27ae60; text-align:right;">${b.paidAmount || '0.00'}</td>
-                <td style="${balStyle}">${b.balanceAmount || '0.00'}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    function clearAllBillsHistory() {
-        if(confirm("Are you sure you want to permanently clear all bills records history?")) {
-            savedBillsLog = [];
-            localStorage.removeItem("bills_history_log");
-            renderBillsHistory();
-        }
-    }
-
-    function showPrintModal() {
-        document.getElementById("printModal").style.display = "block";
-        document.getElementById("pageSize").onchange = function() {
-            const isCustom = this.value === "custom";
-            document.getElementById("customDims").style.display = isCustom ? "block" : "none";
-            document.getElementById("topPageSize").value = this.value;
-            document.getElementById("topCustomDims").style.display = isCustom ? "inline-block" : "none";
-        };
-    }
-
-    function showDevModal() { 
-        document.getElementById('devModal').style.display = 'block'; 
-    }
-
-    // --- Dynamic Auto Increment Logic ---
-    function autoIncrementBillNo() {
-        const billNoEl = document.getElementById("bill-no");
-        let currentVal = billNoEl.innerText.trim();
-        
-        const regex = /^(.*?)(\d+)$/;
-        const match = currentVal.match(regex);
-        
-        if (match) {
-            const prefix = match[1]; 
-            const number = parseInt(match[2], 10); 
-            const newNumber = number + 1;
-            
-            const paddedNumber = match[2].length > 1 ? String(newNumber).padStart(match[2].length, '0') : newNumber;
-            billNoEl.innerText = prefix + paddedNumber;
-        } else {
-            billNoEl.innerText = currentVal + "1";
-        }
-        localStorage.setItem("last_bill_no", billNoEl.innerText);
-    }
-
-    function applyPrint() {
-        captureCustomerName();
-        logBillToHistory(); // Record save
-        autoIncrementBillNo();
-        gtag("event", "bill_generated", { "event_category": "Engagement", "event_label": "Invoice Printed" });
-
-        const size = document.getElementById('pageSize').value; 
-        const wrapper = document.getElementById("bill-content");
-        
-        if (size === "80mm") { wrapper.style.width = "80mm"; wrapper.style.margin = "0 auto"; } 
-        else if (size === "A5") { wrapper.style.width = "148mm"; wrapper.style.margin = "0 auto"; } 
-        else if (size === "Legal") { wrapper.style.width = "216mm"; wrapper.style.margin = "0 auto"; }
-        else if (size === "custom") { wrapper.style.width = document.getElementById("custW").value + "mm"; wrapper.style.margin = "0 auto"; } 
-        else { wrapper.style.width = "100%"; wrapper.style.margin = "0"; }
-        
-        document.getElementById("printModal").style.display = "none";
-
-        setTimeout(() => { 
-            window.print(); 
-            setTimeout(() => { wrapper.style.width = "100%"; wrapper.style.margin = "auto"; }, 1000); 
-        }, 500);
-    }
-
-    async function shareBill() {
-        captureCustomerName();
-        logBillToHistory(); // Record save
-        autoIncrementBillNo();
-        gtag("event", "bill_shared", { "event_category": "Engagement", "event_label": "Invoice Shared" });
-
-        const billContent = document.getElementById('bill-content');
-        const elementsToHide = document.querySelectorAll('.no-print, .rt-col-action, .editable-text-container, .editable-input-container');
-        
-        billContent.classList.add('force-pc-layout');
-
-        elementsToHide.forEach(el => {
-            if (el.classList.contains('editable-text-container') || el.classList.contains('editable-input-container')) {
-                el.style.paddingRight = '0';
-                el.style.setProperty('--show-pencil', 'none');
-            } else { el.style.display = 'none'; }
-        });
-
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-        html2canvas(billContent, { scale: 3, useCORS: true, width: 800 }).then(async (canvas) => {
-            try {
-                const dataUrl = canvas.toDataURL('image/jpeg');
-                const blob = await (await fetch(dataUrl)).blob();
-                const file = new File([blob], 'Invoice.jpg', { type: 'image/jpeg' });
-
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    await navigator.share({ files: [file], title: 'Invoice Bill' });
-                } else {
-                    const link = document.createElement('a');
-                    link.download = 'Invoice.jpg'; link.href = dataUrl; link.click();
-                }
-            } catch (shareErr) { console.error("Sharing failed", shareErr); }
-
-            billContent.classList.remove('force-pc-layout');
-            elementsToHide.forEach(el => {
-                if (el.classList.contains('editable-text-container') || el.classList.contains('editable-input-container')) {
-                    el.style.paddingRight = ''; el.style.removeProperty('--show-pencil');
-                } else { el.style.display = ''; }
-            });
-        });
-    }
-
-    async function downloadFile(formatType) {
-        captureCustomerName();
-        logBillToHistory(); // Record save
-        autoIncrementBillNo();
-        gtag("event", "bill_downloaded", { "event_category": "Engagement", "event_label": "Invoice Downloaded" });
-
-        const billContent = document.getElementById('bill-content');
-        const elementsToHide = document.querySelectorAll('.no-print, .rt-col-action, .editable-text-container, .editable-input-container');
-        
-        billContent.classList.add('force-pc-layout');
-
-        elementsToHide.forEach(el => {
-            if (el.classList.contains('editable-text-container') || el.classList.contains('editable-input-container')) {
-                el.style.paddingRight = '0'; el.style.setProperty('--show-pencil', 'none');
-            } else { el.style.display = 'none'; }
-        });
-
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-        html2canvas(billContent, { scale: 3, useCORS: true, width: 800 }).then(canvas => {
-            if (formatType === 'jpg') {
-                const link = document.createElement('a');
-                link.download = 'Bill.jpg'; link.href = canvas.toDataURL('image/jpeg'); link.click();
-            } else {
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                pdf.addImage(canvas.toDataURL('image/jpeg'), 'JPEG', 0, 0, 210, (canvas.height * 210) / canvas.width);
-                pdf.save('Invoice.pdf');
-            }
-            
-            billContent.classList.remove('force-pc-layout');
-            elementsToHide.forEach(el => {
-                if (el.classList.contains('editable-text-container') || el.classList.contains('editable-input-container')) {
-                    el.style.paddingRight = ''; el.style.removeProperty('--show-pencil');
-                } else { el.style.display = ''; }
-            });
-        });
-    }
-
-    function applyToggles() {
-        document.querySelectorAll('.toggle').forEach(t => {
-            const target = t.getAttribute('data-target');
-            document.querySelectorAll('.' + target).forEach(el => el.style.display = t.checked ? '' : 'none');
-        });
-    }
-
-    window.onclick = function(event) {
-        if (event.target == document.getElementById('devModal')) document.getElementById('devModal').style.display = "none";
-        if (event.target == document.getElementById('printModal')) document.getElementById('printModal').style.display = "none";
-    }
-
-    document.querySelectorAll('.toggle').forEach(t => t.addEventListener('change', applyToggles));
-    document.getElementById('date-field').valueAsDate = new Date();
-    document.getElementById('time-field').value = new Date().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
-    
-    addRow();
-
-    document.addEventListener("DOMContentLoaded", function() {
-    // 🟢 1. Bills History & Bill Number Load
-    renderBillsHistory();
-
-    const lastBill = localStorage.getItem("last_bill_no");
-    if (lastBill) {
-        document.getElementById("bill-no").innerText = lastBill;
-    }
-
-    // 🟢 2. Customer Suggestions Box Logic
-    const custSpan = document.getElementById("cust-name-field");
-    const addrDiv = document.getElementById("cust-address-field");
-    if (custSpan && addrDiv) {
-        const wrap = custSpan.parentElement; 
-        wrap.style.position = "relative";
-        
-        const cSuggestBox = document.createElement("div");
-        cSuggestBox.className = "suggestion-container";
-        cSuggestBox.style.position = "absolute"; 
-        cSuggestBox.style.top = "100%"; 
-        cSuggestBox.style.left = "0"; 
-        cSuggestBox.style.width = "200px"; 
-        cSuggestBox.style.zIndex = "99999";
-        wrap.appendChild(cSuggestBox);
-
-        custSpan.addEventListener("input", function() {
-            const val = this.innerText.trim().toLowerCase();
-            cSuggestBox.innerHTML = '';
-            if (val.length > 0) {
-                const matches = savedCustomers.filter(c => c.name.toLowerCase().includes(val));
-                if (matches.length > 0) {
-                    cSuggestBox.style.display = 'block';
-                    matches.forEach(m => {
-                        const div = document.createElement('div');
-                        div.className = 'suggestion-item'; 
-                        div.innerText = m.name; 
-                        div.style.cursor = "pointer";
-                        div.onclick = function() {
-    custSpan.innerText = m.name; 
-    addrDiv.innerText = m.address || "#"; 
-    cSuggestBox.style.display = 'none';
-
-    // 🆕 PREVIOUS BALANCE FETCH LOGIC FROM SAVED BILLS LOG
-    let foundPrevBal = 0;
-    // History log me se is customer ka sabse pehla (jo ke latest hota hai) bill dhoondo
-    const lastCustomerBill = savedBillsLog.find(b => b.customer.toLowerCase().trim() === m.name.toLowerCase().trim());
-    
-    if (lastCustomerBill && lastCustomerBill.balanceAmount) {
-        // Currency symbol aur baqi characters ko saaf kar k sirf number nikalna
-        const cleanBal = lastCustomerBill.balanceAmount.replace(/[^0-9.-]/g, '');
-        foundPrevBal = parseFloat(cleanBal) || 0;
-    }
-
-    // UI par previous balance set karna (As an Input Value kyun ke ab ye box editable hai)
-    const prevBalField = document.getElementById("prev-bal-val");
-    if (prevBalField) {
-        prevBalField.value = foundPrevBal.toFixed(2); // .innerText ki jagah .value lagaya hai
-    }
-
-    // Calculation ko refresh karna taake naya total ban jaye
-    calc();
-
-    const range = document.createRange(); 
-    const sel = window.getSelection();
-    range.selectNodeContents(custSpan); 
-    range.collapse(false);
-    sel.removeAllRanges(); 
-    sel.addRange(range);
-};
-cSuggestBox.appendChild(div);
-
-                    });
-                } else { cSuggestBox.style.display = 'none'; }
-            } else { cSuggestBox.style.display = 'none'; }
-        });
-
-        custSpan.addEventListener('blur', function() { 
-            setTimeout(() => { cSuggestBox.style.display = 'none'; }, 200); 
-        });
-    }
-    
-    // Page Size Logic
-    const pageSizeElement = document.getElementById('pageSize');
-    if (pageSizeElement) {
-        pageSizeElement.addEventListener('change', function() {
-            document.getElementById('topPageSize').value = this.value;
-            document.getElementById('topCustomDims').style.display = this.value === 'custom' ? 'inline-block' : 'none';
-        });
-    }
-
-    // 🟢 3. Invoice Notes Auto-Save Logic
-    const noteBody = document.getElementById("note-body");
-    if (noteBody) {
-        const savedNote = localStorage.getItem("custom_invoice_note");
-        if (savedNote !== null) {
-            noteBody.innerText = savedNote;
-        }
-
-        noteBody.addEventListener("input", function () {
-            localStorage.setItem("custom_invoice_note", this.innerText);
-        });
-
-        noteBody.addEventListener("focus", function () {
-            if (this.innerText.trim() === "Thank you for your business!") {
-                document.execCommand('selectAll', false, null);
-            }
-        });
-    }
-
-    // 🟢 4. TAX & DISCOUNT LIVE CALCULATION LISTENERS (DOM ke andar)
-    
-    // A) Discount Master Checkbox Live Click
-    const discMaster = document.getElementById('disc-master');
-    if (discMaster) {
-        discMaster.addEventListener('change', function() {
-            calc();
-        });
-    }
-
-    // B) Tax Master Checkbox (LIVE UNCHECK RESET KE LIYE SABSE ZAROORI)
-    const taxMaster = document.getElementById('tax-master');
-    if (taxMaster) {
-        taxMaster.addEventListener('change', function() {
-            calc();
-        });
-    }
-
-    // C) Tax Rate Field (Value input ya change karne par)
-    const taxRateField = document.getElementById('tax-rate-field');
-    if (taxRateField) {
-        // Agar dynamic span/div hai ya input field hai, donon conditions cover ho jayengi
-        taxRateField.addEventListener('input', calc);
-        taxRateField.addEventListener('change', calc);
-        taxRateField.addEventListener('keyup', calc);
-        taxRateField.addEventListener('blur', calc);
-    }
-});
-
-
-
-
-    (function(){
-        const devInfo = { name: "WasiDevelopers", whatsapp: "923346800959", displayPhone: "0334-6800959" };
-        const contactDiv = document.getElementById('wasi-contact');
-        const waLink = document.getElementById('modal-wa-link');
-        const brandingArea = document.querySelector('.permanent-branding');
-        
-        if (contactDiv && !contactDiv.innerHTML.includes('contenteditable')) {
-            contactDiv.innerHTML = 'Mobile: <div class="editable-text-container"><div contenteditable="true" style="display:inline-block; font-weight: normal; outline:none; min-width:100px; word-break:break-word; vertical-align:middle;">0334-6800959</div></div>';
-        }
-        
-        const updateUI = () => {
-            if (brandingArea && brandingArea.innerHTML !== 'https://freebills.netlify.app/') { brandingArea.innerHTML = 'https://freebills.netlify.app/'; }
-            if(waLink) { waLink.setAttribute('href', "https://wa.me/" + devInfo.whatsapp); }
-        };
-        updateUI(); setInterval(updateUI, 1500);
-    })();
-    
-</script>
-
-        <!-- Modern PWA Install Banner - FIXED ID & CLOSE BUTTON -->
 <div id="pwa-install-btn" style="display: none; background: #ffffff; color: #2c3e50; padding: 12px 20px; text-align: center; font-family: sans-serif; position: fixed; top: 0; left: 0; right: 0; z-index: 9999; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border-bottom: 2px solid #27ae60; align-items: center; justify-content: center; gap: 10px;">
-    
     <span style="font-size: 13px; font-weight: 600;">⚡ Install App for better experience!</span>
-    
-    <!-- ID yahan sahi ki gayi hai -->
     <button id="pwa-actual-install-click" style="background: #27ae60; color: white; border: none; padding: 6px 16px; border-radius: 20px; font-weight: bold; cursor: pointer;">Install</button>
-    
-    <!-- Close button taake banner ko hataya ja sake -->
     <button onclick="document.getElementById('pwa-install-btn').style.display='none'" style="background: transparent; border: none; font-size: 18px; cursor: pointer; color: #888;">&times;</button>
 </div>
 
-    
-<script>
-// ==========================================
-// 🛡️ --- COMPLETE SECURITY & ANTI-TAMPER BLOCK ---
-// ==========================================
+<!-- Custom JS Link -->
+<script src="script.js"></script>
 
-// 1. 🚫 INSPECT ELEMENT & RIGHT CLICK BLOCKER
-document.addEventListener('contextmenu', event => event.preventDefault()); // Right-click block
-
-document.onkeydown = function(e) {
-    if (e.keyCode == 123) return false; // F12 key block
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; // Ctrl+Shift+I block
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; // Ctrl+Shift+J block
-    if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U (View Source) block
-};
-
-// 2. ⚠️ STRICT CODE INTEGRITY VERIFICATION (3 SECONDS LOCK)
-(function() {
-    // 🌟 AAPKA NEW VERIFIED CODE SIZE: Yahan 4341 set kar diya hai!
-    const CORRECT_HASH_SIGNATURE = 13011; 
-
-    const enforceSecurityLock = () => {
-        try {
-            let currentStrippedSource = ''; 
-            
-            const safeFunctions = [];
-            if (typeof calc !== 'undefined') safeFunctions.push(calc);
-            if (typeof addRow !== 'undefined') safeFunctions.push(addRow);
-            if (typeof reIndex !== 'undefined') safeFunctions.push(reIndex);
-            if (typeof applyToggles !== 'undefined') safeFunctions.push(applyToggles);
-            if (typeof logBillToHistory !== 'undefined') safeFunctions.push(logBillToHistory);
-            if (typeof downloadHistoryPDF !== 'undefined') safeFunctions.push(downloadHistoryPDF);
-            if (typeof downloadFile !== 'undefined') safeFunctions.push(downloadFile);
-            if (typeof shareBill !== 'undefined') safeFunctions.push(shareBill);
-            if (typeof autoIncrementBillNo !== 'undefined') safeFunctions.push(autoIncrementBillNo);
-            if (typeof captureCustomerName !== 'undefined') safeFunctions.push(captureCustomerName);
-            if (typeof gtag !== 'undefined') safeFunctions.push(gtag);
-            if (typeof applyPrint !== 'undefined') safeFunctions.push(applyPrint);
-            if (typeof showPrintModal !== 'undefined') safeFunctions.push(showPrintModal);
-            if (typeof clearAllBillsHistory !== 'undefined') safeFunctions.push(clearAllBillsHistory);
-            if (typeof renderBillsHistory !== 'undefined') safeFunctions.push(renderBillsHistory);
-            if (typeof showDevModal !== 'undefined') safeFunctions.push(showDevModal);
-            if (typeof handleCurrencyChange !== 'undefined') safeFunctions.push(handleCurrencyChange);
-            if (typeof updateCurrencySymbol !== 'undefined') safeFunctions.push(updateCurrencySymbol);
-            
-            safeFunctions.forEach(fn => { 
-                currentStrippedSource += fn.toString().replace(/\s+/g,''); 
-            });
-
-            const currentLength = currentStrippedSource.length;
-
-            // 👇 ALERT KO COMMENT KAR DIYA HAI: Taake baar baar popup na aaye. 
-            // Agar kabhi dobara check karna ho to shuru se '//' hata dena.
-           //        alert("🔥 AAPKA ORIGINAL CODE SIZE: " + currentLength);
-
-            // Agar kisi ne code mein tabdeeli ki to character length badal jayegi
-            if (currentLength !== CORRECT_HASH_SIGNATURE) {
-                document.body.innerHTML = `
-                    <div style="position:fixed; top:0; left:0; width:100vw; height:100vh; background-color:#7f1d1d; color:#ffffff; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:sans-serif; padding:20px; text-align:center; z-index:999999;">
-                        <h1 style="font-size:42px; margin-bottom:20px;">⚠️ CODE TAMPERING DETECTED</h1>
-                        <p style="font-size:18px; max-width:600px; line-height:1.6; margin-bottom:20px;">
-                            Unauthorized modifications to the original source code or the developer's intellectual property have been detected. In accordance with our security policy, your access to this application has been permanently revoked.
-                        </p>
-                        <p style="font-size:16px; color:#f3f4f6; margin-bottom:30px;">
-                            Please contact <strong>Wasi Developers</strong> on WhatsApp to resolve this issue: 
-                            <a href="https://wa.me/923346800959" target="_blank" style="color:#22c55e; font-weight:bold; text-decoration:underline; margin-left:5px;">+923346800959</a>
-                        </p>
-                        <div style="background:#000; padding:15px; border-radius:5px; font-family:monospace; font-size:14px; color:#ef4444;">
-                            Error Code: ERR_AUTH_INTEGRITY_VIOLATION
-                        </div>
-                    </div>
-                `;
-                // Browser tab ko freeze rakhne ke liye hard redirect lock
-            //    setInterval(() => { window.location.reload(); },5000);
-            }
-        } catch(e) {
-            document.body.innerHTML = "Security system bypassed. Access Denied. Contact Wasi Developers at +923346800959.";
-        }
-    };
-    
-    // 🔥 SECURITY ACTIVE! 3 second baad system background mein check karega.
-             setTimeout(enforceSecurityLock, 0); 
-})();
-
-</script>
 </body>
 </html>
