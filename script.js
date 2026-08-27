@@ -600,18 +600,18 @@ document.addEventListener("DOMContentLoaded", function() {
 // ==========================================
 
 // 1. 🚫 INSPECT ELEMENT & RIGHT CLICK BLOCKER
-document.addEventListener('contextmenu', event => event.preventDefault()); // Right-click block
+document.addEventListener('contextmenu', event => event.preventDefault()); 
 
 document.onkeydown = function(e) {
-    if (e.keyCode == 123) return false; // F12 key block
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; // Ctrl+Shift+I block
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; // Ctrl+Shift+J block
-    if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U (View Source) block
+    if (e.keyCode == 123) return false;
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+    if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
 };
 
-// 2. ⚠️ STRICT CODE INTEGRITY VERIFICATION (LOCK)
+// 2. ⚠️ STRICT CODE INTEGRITY VERIFICATION
 (function() {
-    // 🌟 EXACT FIXED LENGTH: Gtag ko nikalne ke baad yeh 12494 par permanent lock ho gaya hai
+    // 🌟 Yahan apni verified length set karein
     const CORRECT_HASH_SIGNATURE = 12494; 
 
     const enforceSecurityLock = () => {
@@ -643,20 +643,25 @@ document.onkeydown = function(e) {
 
             const currentLength = currentStrippedSource.length;
 
-            // Agar kisi ne core app code mein tabdeeli ki to screen red ho jayegi
+            // Agar code tamper hua to Tamper screen + Error Code ke neche Yellow Length show ho gi
             if (currentLength !== CORRECT_HASH_SIGNATURE) {
                 document.body.innerHTML = `
-                    <div style="position:fixed; top:0; left:0; width:100vw; height:100vh; background-color:#7f1d1d; color:#ffffff; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:sans-serif; padding:20px; text-align:center; z-index:999999;">
-                        <h1 style="font-size:42px; margin-bottom:20px;">⚠️ CODE TAMPERING DETECTED</h1>
-                        <p style="font-size:18px; max-width:600px; line-height:1.6; margin-bottom:20px;">
+                    <div style="position:fixed; top:0; left:0; width:100vw; height:100vh; background-color:#7f1d1d; color:#ffffff; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:sans-serif; padding:20px; text-align:center; box-sizing:border-box; z-index:999999;">
+                        <h1 style="font-size:36px; margin-bottom:15px;">⚠️ CODE TAMPERING DETECTED</h1>
+                        <p style="font-size:16px; max-width:600px; line-height:1.6; margin-bottom:20px; color:#e5e7eb;">
                             Unauthorized modifications to the original source code or the developer's intellectual property have been detected. In accordance with our security policy, your access to this application has been permanently revoked.
                         </p>
-                        <p style="font-size:16px; color:#f3f4f6; margin-bottom:30px;">
+                        <p style="font-size:15px; color:#f3f4f6; margin-bottom:25px;">
                             Please contact <strong>Wasi Developers</strong> on WhatsApp to resolve this issue: 
                             <a href="https://wa.me/923346800959" target="_blank" style="color:#22c55e; font-weight:bold; text-decoration:underline; margin-left:5px;">+923346800959</a>
                         </p>
-                        <div style="background:#000; padding:15px; border-radius:5px; font-family:monospace; font-size:14px; color:#ef4444;">
+                        <div style="background:#000000; padding:12px 20px; border-radius:5px; font-family:monospace; font-size:14px; color:#ef4444; margin-bottom:15px;">
                             Error Code: ERR_AUTH_INTEGRITY_VIOLATION
+                        </div>
+                        
+                        <!-- 🟡 Error Code ke neche Yellow colour mein Current Length -->
+                        <div style="background:rgba(0,0,0,0.6); padding:10px 20px; border-radius:5px; border:1px dashed #facc15; font-family:monospace; font-size:16px; font-weight:bold; color:#facc15;">
+                            ⚡ CURRENT TOTAL LENGTH: ${currentLength}
                         </div>
                     </div>
                 `;
