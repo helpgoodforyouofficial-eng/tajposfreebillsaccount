@@ -599,19 +599,17 @@ document.addEventListener("DOMContentLoaded", function() {
 // 🛡️ --- COMPLETE SECURITY & ANTI-TAMPER BLOCK ---
 // ==========================================
 
-// 1. 🚫 INSPECT ELEMENT & RIGHT CLICK BLOCKER
-document.addEventListener('contextmenu', event => event.preventDefault()); // Right-click block
+document.addEventListener('contextmenu', event => event.preventDefault());
 
 document.onkeydown = function(e) {
-    if (e.keyCode == 123) return false; // F12 key block
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; // Ctrl+Shift+I block
-    if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; // Ctrl+Shift+J block
-    if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U (View Source) block
+    if (e.keyCode == 123) return false;
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+    if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
 };
 
-// 2. ⚠️ STRICT CODE INTEGRITY VERIFICATION (3 SECONDS LOCK)
 (function() {
-    // 🌟 AAPKA NEW VERIFIED CODE SIZE: Yahan 4341 set kar diya hai!
+    // 🌟 EXACT MATCHING VALUE
     const CORRECT_HASH_SIGNATURE = 12494; 
 
     const enforceSecurityLock = () => {
@@ -624,12 +622,10 @@ document.onkeydown = function(e) {
             if (typeof reIndex !== 'undefined') safeFunctions.push(reIndex);
             if (typeof applyToggles !== 'undefined') safeFunctions.push(applyToggles);
             if (typeof logBillToHistory !== 'undefined') safeFunctions.push(logBillToHistory);
-            if (typeof downloadHistoryPDF !== 'undefined') safeFunctions.push(downloadHistoryPDF);
             if (typeof downloadFile !== 'undefined') safeFunctions.push(downloadFile);
             if (typeof shareBill !== 'undefined') safeFunctions.push(shareBill);
             if (typeof autoIncrementBillNo !== 'undefined') safeFunctions.push(autoIncrementBillNo);
             if (typeof captureCustomerName !== 'undefined') safeFunctions.push(captureCustomerName);
-            if (typeof gtag !== 'undefined') safeFunctions.push(gtag);
             if (typeof applyPrint !== 'undefined') safeFunctions.push(applyPrint);
             if (typeof showPrintModal !== 'undefined') safeFunctions.push(showPrintModal);
             if (typeof clearAllBillsHistory !== 'undefined') safeFunctions.push(clearAllBillsHistory);
@@ -644,36 +640,31 @@ document.onkeydown = function(e) {
 
             const currentLength = currentStrippedSource.length;
 
-            // 👇 ALERT KO COMMENT KAR DIYA HAI: Taake baar baar popup na aaye. 
-            // Agar kabhi dobara check karna ho to shuru se '//' hata dena.
-                   alert("🔥 AAPKA ORIGINAL CODE SIZE: " + currentLength);
-
-            // Agar kisi ne code mein tabdeeli ki to character length badal jayegi
+            // Strict Check
             if (currentLength !== CORRECT_HASH_SIGNATURE) {
                 document.body.innerHTML = `
-                    <div style="position:fixed; top:0; left:0; width:100vw; height:100vh; background-color:#7f1d1d; color:#ffffff; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:sans-serif; padding:20px; text-align:center; z-index:999999;">
-                        <h1 style="font-size:42px; margin-bottom:20px;">⚠️ CODE TAMPERING DETECTED</h1>
-                        <p style="font-size:18px; max-width:600px; line-height:1.6; margin-bottom:20px;">
+                    <div style="background-color: #8B0000; color: #FFFFFF; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; font-family: sans-serif; padding: 20px; box-sizing: border-box;">
+                        <div style="font-size: 64px; margin-bottom: 10px;">⚠️</div>
+                        <h1 style="font-size: 32px; font-weight: 800; margin: 0 0 15px 0;">CODE TAMPERING DETECTED</h1>
+                        <p style="font-size: 16px; line-height: 1.6; max-width: 600px; margin: 0 0 25px 0; color: #E0E0E0;">
                             Unauthorized modifications to the original source code or the developer's intellectual property have been detected. In accordance with our security policy, your access to this application has been permanently revoked.
                         </p>
-                        <p style="font-size:16px; color:#f3f4f6; margin-bottom:30px;">
+                        <p style="font-size: 16px; margin: 0 0 25px 0;">
                             Please contact <strong>Wasi Developers</strong> on WhatsApp to resolve this issue: 
-                            <a href="https://wa.me/923346800959" target="_blank" style="color:#22c55e; font-weight:bold; text-decoration:underline; margin-left:5px;">+923346800959</a>
+                            <a href="https://wa.me/923346800959" style="color: #25D366; font-weight: bold; text-decoration: none;">+923346800959</a>
                         </p>
-                        <div style="background:#000; padding:15px; border-radius:5px; font-family:monospace; font-size:14px; color:#ef4444;">
+                        <div style="background-color: #000000; color: #FF4D4D; font-family: monospace; padding: 12px 24px; border-radius: 4px; font-size: 14px;">
                             Error Code: ERR_AUTH_INTEGRITY_VIOLATION
                         </div>
                     </div>
                 `;
-                // Browser tab ko freeze rakhne ke liye hard redirect lock
-            //    setInterval(() => { window.location.reload(); },5000);
             }
         } catch(e) {
-            document.body.innerHTML = "Security system bypassed. Access Denied. Contact Wasi Developers at +923346800959.";
+            console.error("Security System Error:", e);
         }
     };
     
-    // 🔥 SECURITY ACTIVE! 3 second baad system background mein check karega.
-             setTimeout(enforceSecurityLock, 0); 
+    setTimeout(enforceSecurityLock, 500); 
 })();
+
 
