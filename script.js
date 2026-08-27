@@ -639,6 +639,8 @@ document.onkeydown = function(e) {
             });
 
             const currentLength = currentStrippedSource.length;
+            // 👇 Yahan yeh line temporary likhein:
+                alert("NEW LENGTH IS: " + currentLength);
 
             // Strict Check
             if (currentLength !== CORRECT_HASH_SIGNATURE) {
