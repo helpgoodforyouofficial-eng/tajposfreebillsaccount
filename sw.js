@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bill-gen-v18'; //  v18  v19
+const CACHE_NAME = 'bill-gen-v19'; //  v18  v19
 const ASSETS = [
   './',
   './index.html',
