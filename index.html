@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Universal Bill Generator</title>
+
+    <!-- SweetAlert2 (     ) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- PWA Meta Tags & Manifest Link -->
+    <meta name="theme-color" content="#2c3e50">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
+    <!--  CSS FILE LINK -->
+    <link rel="stylesheet" href="style.css">
+<!-- FontAwesome Icons CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- External Libraries (CDN) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <!-- Google Analytics (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-10843713009"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MM1128NLL1"></script>
+</head>
+<body>
+
+<!-- ===== ADMIN PANEL ===== -->
+
+
+
+<div class="admin-panel no-print">
+    <h3 style="margin:0 0 10px 0; color: var(--primary);">Advanced Settings</h3>
+
+    <div class="config-grid">
+        <span class="config-item">Layout Direction:
+            <select id="layoutDirection" onchange="toggleDirection(this.value)" style="width: 140px; padding: 4px; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; background: white; height: auto;">
+                <option value="ltr" selected>English (LTR)</option>
+                <option value="rtl">Urdu (RTL)</option>
+            </select>
+        </span>
+    </div>
+
+    <div class="config-grid">
+        <span class="config-item">Title Size:</span>
+        <label><input type="radio" name="tsize" value="title-normal" onclick="updateTitleSize(this.value)"> Normal</label>
+        <label><input type="radio" name="tsize" value="title-medium" onclick="updateTitleSize(this.value)"> Medium</label>
+        <label><input type="radio" name="tsize" value="title-large" checked onclick="updateTitleSize(this.value)"> Large</label>
+    </div>
+
+    <div class="config-grid">
+        <label class="config-item"><input type="checkbox" class="toggle" data-target="date-wrap" checked style="transform: scale(1.25); margin-right: 5px; cursor: pointer;"> Show Date</label>
+        <label class="config-item"><input type="checkbox" class="toggle" data-target="time-wrap" checked style="transform: scale(1.25); margin-right: 5px; cursor: pointer;"> Show Time</label>
+        <label class="config-item"><input type="checkbox" class="toggle" data-target="ntn-wrap" style="transform: scale(1.25); margin-right: 5px; cursor: pointer;"> Show NTN</label>
+        <label class="config-item"><input type="checkbox" class="toggle" data-target="col-disc" id="disc-master" style="transform: scale(1.25); margin-right: 5px; cursor: pointer;"> Discount</label>
+        <label class="config-item"><input type="checkbox" class="toggle" data-target="tax-row" id="tax-master" style="transform: scale(1.25); margin-right: 5px; cursor: pointer;"> Tax (GST)</label>
+        <label class="config-item"><input type="checkbox" class="toggle" data-target="note-row" id="note-master" style="transform: scale(1.25); margin-right: 5px; cursor: pointer;"> Show Note</label>
+
+        <span class="config-item">Paper Size:
+            <select id="topPageSize" onchange="syncPaperSize(this.value)" style="width: 130px; padding: 4px; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; background: white; height: auto;">
+                <option value="A4" selected>Standard A4</option>
+                <option value="A5">Small A5</option>
+                <option value="Legal">Legal Size</option>
+                <option value="80mm">Thermal (80mm)</option>
+                <option value="custom">Custom Size</option>
+            </select>
+        </span>
+        <span id="topCustomDims" style="display:none; font-size: 12px; font-weight: bold;">
+            W(mm): <input type="number" id="topCustW" value="210" oninput="document.getElementById('custW').value=this.value" style="border:1px solid #ccc; width:50px; background:white; padding:2px; height:22px; line-height:22px;">
+        </span>
+
+        <span class="config-item">Currency:
+            <select id="currency" onchange="handleCurrencyChange(this.value)" style="width: 140px; padding: 4px; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; background: white; height: auto;">
+                <option value="Rs" selected>Pakistan (Rs)</option>
+                <option value="">India (INR - )</option>
+                <option value="$">USA (USD - $)</option>
+                <option value="AED">UAE (AED)</option>
+                <option value="SR">Saudi (SAR)</option>
+                <option value="£">UK (GBP - £)</option>
+                <option value="€">Europe (EUR - €)</option>
+                <option value="KD">Kuwait (KWD)</option>
+                <option value="BD">Bahrain (BHD)</option>
+                <option value="QR">Qatar (QAR)</option>
+                <option value="OMR">Oman (OMR)</option>
+                <option value="AFN">Afghanistan (AFN)</option>
+                <option value="Tk">Bangladesh (BDT)</option>
+                <option value="Nu">Bhutan (BTN)</option>
+                <option value="">Cambodia (KHR)</option>
+                <option value="HK$">Hong Kong (HKD)</option>
+                <option value="Rp">Indonesia (IDR)</option>
+                <option value="">South Korea (KRW)</option>
+                <option value="RM">Malaysia (MYR)</option>
+                <option value="">Nepal (NPR)</option>
+                <option value="">Philippines (PHP)</option>
+                <option value="S$">Singapore (SGD)</option>
+                <option value="">Sri Lanka (LKR)</option>
+                <option value="">Thailand (THB)</option>
+                <option value="">Vietnam (VND)</option>
+                <option value="A$">Australia (AUD)</option>
+                <option value="C$">Canada (CAD)</option>
+                <option value="NZ$">New Zealand (NZD)</option>
+                <option value="CHF">Swiss (CHF)</option>
+                <option value="R$">Brazil (BRL)</option>
+                <option value="custom">-- Add New/Custom --</option>
+            </select>
+        </span>
+        <!--  v75: Compact Bill No + RTL header alignment fix -->
+        <span style="background: #e74c3c; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; margin-left: 10px;">v79</span>
+    </div>
+</div>
+
+<!-- ===== BILL CONTENT ===== -->
+<div class="bill-wrapper" id="bill-content">
+    <div class="header">
+        <div>
+            <!-- Business Name -->
+            <div class="editable-text-container">
+                <div id="main-title" class="biz-name title-large" contenteditable="true">ABC Traders</div>
+            </div><br>
+            
+            <!-- Owner Wrap -->
+            <div class="owner-wrap" style="font-size: 14px; font-weight: normal; margin-top: 5px;">
+                <div class="editable-text-container" style="display: inline-flex; vertical-align: middle;">
+                    <span id="owner-label" contenteditable="true" spellcheck="false" style="outline: none; border-bottom: 1px dotted #ccc;">Owner</span>
+                </div>:
+                <div class="editable-text-container" style="vertical-align: middle;">
+                    <span id="owner-name-field" contenteditable="true" spellcheck="false" style="display: inline-block; min-width: 100px; outline: none; font-weight: bold;">&nbsp;</span>
+                </div>
+            </div>
+            
+            <!-- Contact Wrap -->
+            <div id="wasi-contact" style="font-size: 14px; font-weight: normal; margin-top: 3px;"></div>
+
+           
+            
+            <!-- Address Wrap -->
+            <div id="biz-address-wrap" style="font-size: 14px; margin-top: 5px;">
+                <span id="biz-addr-label">Address:</span>
+                <div class="editable-text-container">
+                    <div contenteditable="true" style="display:inline-block; font-weight: normal;">National Highway, Sadiq Abad</div>
+                </div>
+            </div>
+
+            
+
+            <!-- Customer Info Wrap -->
+            <div class="customer-info-wrap" style="margin-top: 15px; font-size: 14px; text-align: left; border-top: 1px dashed #eee; padding-top: 10px; display: flex; flex-direction: column; gap: 5px; width: 100%;">
+                <!-- Customer Name Row -->
+                <div style="display: flex; align-items: center; gap: 4px; width: 100%;">
+                    <span id="lbl-cust-name">Customer:</span>
+                    <div class="editable-text-container" style="font-weight: bold; flex: 1; display: block; text-align: left;">
+                        <span id="cust-name-field" contenteditable="true" style="display: block; border-bottom: 1px dotted #ccc; text-align: left; width: 100%;">Counter Sale</span>
+                    </div>
+                </div>
+                
+                <!-- Customer Address Row -->
+                <div style="display: flex; align-items: center; gap: 4px; width: 100%;">
+                    <span id="lbl-cust-addr">Address:</span>
+                    <div class="editable-text-container" style="font-weight: normal; flex: 1; display: block; text-align: left;">
+                        <span id="cust-address-field" contenteditable="true" style="display: block; border-bottom: 1px dotted #ccc; text-align: left; width: 100%; outline: none;">#</span>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- Closing first div of header -->
+
+
+
+                <!-- v76: META COLUMN — Date/Time/NTN/Bill No sab ek aligned column mein -->
+        <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; line-height: 1.5;">
+            <h1 style="margin:0 0 4px 0; color: #2c3e50; font-size: 28px;">INVOICE</h1>
+            <div class="meta-row date-wrap">
+                <span class="meta-label">Date:</span>
+                <div class="meta-value">
+                    <div class="editable-text-container" style="padding-right:15px;">
+                        <input type="date" id="date-field" style="width:100%; text-align:right; font-weight: normal; height:30px; line-height:30px; display:inline-block; vertical-align:middle;">
+                    </div>
+                </div>
+            </div>
+            <div class="meta-row time-wrap">
+                <span class="meta-label">Time:</span>
+                <div class="meta-value">
+                    <div class="editable-text-container" style="padding-right:25px;">
+                        <input type="time" id="time-field" style="width:100%; text-align:right; font-weight: normal; height:30px; line-height:30px; display:inline-block; vertical-align:middle;">
+                    </div>
+                </div>
+            </div>
+            <div class="meta-row ntn-wrap">
+                <span class="meta-label">NTN:</span>
+                <div class="meta-value">
+                    <div class="editable-text-container" style="padding-right: 18px;">
+                        <div id="ntn-field" contenteditable="true" spellcheck="false" style="display: inline-block; width:100%; font-weight: bold; outline: none; vertical-align: middle; text-align:right;">1234567-8</div>
+                    </div>
+                </div>
+            </div>
+            <div class="meta-row bill-no-row">
+                <span class="meta-label">Bill No:</span>
+                <div class="meta-value">
+                    <div class="editable-text-container" style="padding-right: 20px;">
+                        <div id="bill-no" contenteditable="true" style="display: inline-block; width:100%; font-weight: bold; outline: none; vertical-align: middle; text-align:right;">101</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+    <tr>
+        <th width="5%">#</th>
+        <th width="40%">Description</th>
+        <th width="10%">Qty</th>
+        <th width="12%">Rate</th>
+        <th class="col-disc" width="10%">Disc</th>
+        <th width="13%">Total</th>
+        <th class="no-print" width="5%">Action</th>
+    </tr>
+</thead>
+
+
+
+        <tbody id="items"></tbody>
+    </table>
+
+    <button class="btn-add no-print" onclick="addRow()">+ Add New Item</button>
+
+    <div class="summary-box">
+        <table class="sum-table">
+            <tr>
+                <td>Sub Total:</td>
+                <td><span class="cur">Rs</span> <span id="sub-val">0.00</span></td>
+            </tr>
+            <tr class="col-disc" style="color: green; display: none;">
+                <td>Discount:</td>
+                <td>- <span id="disc-amt">0.00</span></td>
+            </tr>
+            <tr class="tax-row" style="color: #c0392b; display: none;">
+                <td>
+                    Tax (GST <span id="tax-rate-field" contenteditable="true" style="border-bottom: 1px dashed #c0392b; padding: 0 2px; outline: none; font-weight: bold; display: inline-block;">2.5</span>%
+                    <span class="no-print" style="font-size: 0.85em; color: #888; margin-left: 2px; cursor: pointer;"></span>):
+                </td>
+                <td>+ <span id="tax-amount">0.00</span></td>
+            </tr>
+            <tr style="font-weight:bold; font-size:1.25em; border-top: 2px solid #333;">
+                <td>Grand Total:</td>
+                <td><span class="cur">Rs</span> <span id="total-val">0.00</span></td>
+            </tr>
+            <tr style="color: #7f8c8d; font-weight: bold;">
+                <td>Previous Balance:</td>
+                <td>
+                    <div class="editable-text-container" style="padding-right:15px;">
+                        <input type="number" id="prev-bal-val" value="0" oninput="calc()" style="text-align:right; font-weight:bold; width:95px; height:30px; line-height:30px; padding-bottom:2px; display:inline-block; vertical-align:middle; color: #7f8c8d;" onclick="this.select()">
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>Received:</td>
+                <td>
+                    <div class="editable-text-container" style="padding-right:15px;">
+                        <input type="number" id="paid" value="0" oninput="calc()" style="text-align:right; font-weight:bold; width:95px; height:30px; line-height:30px; padding-bottom:2px; display:inline-block; vertical-align:middle;" onclick="this.select()">
+                    </div>
+                </td>
+            </tr>
+            <tr style="color:red; font-weight:bold;">
+                <td>Total Pending Balance:</td>
+                <td><span class="cur">Rs</span> <span id="bal-val">0.00</span></td>
+            </tr>
+        </table>
+    </div>
+
+    <!--  NOTE BOX -->
+    <div class="note-row" style="position: absolute; left: 190px; right: 210px; bottom: 10px; display: none; padding-left: 10px; padding-right: 10px; padding-top: 5px; padding-bottom: 5px; box-sizing: border-box;">
+        <div dir="auto" style="font-weight: bold; font-size: 11px; color: #555; margin-bottom: 2px; text-align: start;">
+            Note / Terms: <span class="no-print" style="font-size: 0.85em; color: #888; margin-left: 2px; cursor: pointer;"></span>
+        </div>
+        <div id="note-body" contenteditable="true" dir="auto" style="border: 1px dashed #ccc; padding: 6px; border-radius: 4px; font-size: 11px; min-height: 40px; min-width: 250px; width: fit-content; max-width: 100%; color: #333; outline: none; background: rgba(250, 250, 250, 0.95); line-height: 1.3; white-space: normal; text-align: start; word-wrap: break-word; word-break: break-word; overflow-wrap: break-word;" placeholder="Write note...">1. Please clear the bill amount within 7 days.
+2. Kindly check the expiry of the items on the spot.
+3. The distribution is not responsible for any personal transactions with the salesman.
+4. For expired items claim, please inform us 1 month in advance.
+</div>
+    </div>
+
+    <div class="footer-area">
+        <div class="qr-section">
+            <div id="qrcode"></div>
+            <div class="permanent-branding">https://freebills.netlify.app</div>
+        </div>
+        <div style="text-align:center;">
+            <div style="width: 150px; border-top: 1.2px solid #333; padding-top: 8px; font-weight: bold; margin-top:30px;">Signature</div>
+        </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="no-challenge-disclaimer" style="text-align: left; font-size: 7px; color: #7f8c8d; margin-top: 4px; font-style: italic; max-width: 160px; line-height: 1.2;">
+        This Free Bills E-Bill: Not legally binding. <br>Cannot be challenged in any court.
+    </div>
+</div>
+
+<!-- ===== ACTION BUTTONS ===== -->
+<div class="action-buttons no-print">
+    <button class="btn btn-pdf" onclick="downloadFile('pdf')">Save PDF</button>
+    <button class="btn btn-jpg" onclick="downloadFile('jpg')">Save JPG</button>
+    <button class="btn btn-share" onclick="shareBill()">Share Bill</button>
+    <button class="btn btn-print" onclick="showPrintModal()">Print Options</button>
+    <button class="btn" style="background: #2c3e50; grid-column: span 2;" onclick="showDevModal()">Developer Information</button>
+</div>
+
+<!-- ===== HISTORY PANEL ===== -->
+<div class="record-panel no-print">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #eee; padding-bottom:10px; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+        <h3 style="margin:0; color: var(--primary);">&#128221; Saved Bills History / Ledger</h3>
+        
+        <!-- Action Buttons Container -->
+        <div style="display:flex; gap:8px; align-items:center;">
+            <!-- 1. Edit Bill Button -->
+            <button id="btn-edit-mode" onclick="toggleEditMode()" style="background:#f39c12; color:white; border:none; padding:6px 12px; border-radius:4px; font-weight:bold; cursor:pointer; font-size:12px;">&#9999;&#xFE0F; Edit Bill</button>
+            <!-- 3. 🆕 View Bill Button (purana bill dekho/re-print bina edit) -->
+         <button id="btn-view-mode" onclick="toggleViewMode()" style="background:#3498db; color:white; border:none; padding:6px 12px; border-radius:4px; font-weight:bold; cursor:pointer; font-size:12px;">👁️ View Bill</button>
+            <!-- 2. Delete Bill Button -->
+            <button id="btn-toggle-delete-mode" onclick="toggleDeleteMode()" style="background:#e74c3c; color:white; border:none; padding:6px 12px; border-radius:4px; font-weight:bold; cursor:pointer; font-size:12px;">&#128465;&#xFE0F; Delete Bill</button>
+            
+            <!-- Hidden Delete Selected Button (Delete Bill      ) -->
+            <button id="btn-delete-selected" onclick="deleteSelectedBills()" style="background:#c0392b; color:white; border:none; padding:6px 12px; border-radius:4px; font-weight:bold; cursor:pointer; font-size:12px; display:none;">&#10060; Delete Selected</button>
+
+            <!-- 3. Download History Button -->
+            <button id="btn-download-history" onclick="downloadHistoryPDF()" style="background:#27ae60; color:white; border:none; padding:6px 12px; border-radius:4px; font-weight:bold; cursor:pointer; font-size:12px;">&#128229; Download History</button>
+        </div>
+    </div>
+
+
+    <div style="overflow-x:auto;">
+        <table class="record-table">
+            <thead>
+                <tr>
+                    <!-- Selection Checkbox Header (ڈیلیٹ موڈ کے لیے) -->
+                    <th class="select-col-header" style="display:none; width:5%; text-align:center;">
+                        <input type="checkbox" onchange="toggleSelectAllBills(this)">
+                    </th>
+                    <th width="10%">Bill No</th>
+                    <th width="18%">Customer</th>
+                    <th width="12%">Date</th>
+                    <th width="30%">Products Details (Qty x Rate)</th>
+                    <th width="10%">Grand Total</th>
+                    <th width="10%">Received</th>
+                    <th width="10%">Balance</th>
+                    <!-- Action Column Header (ایڈٹ موڈ کے لیے) -->
+                    <th class="action-col-header" style="display:none; width:10%; text-align:center;">Action</th>
+                </tr>
+            </thead>
+            <tbody id="bill-history-rows">
+                <tr><td colspan="8" style="text-align:center; color:#999; padding:20px;">No bill records found yet. Save/Print a bill to log details.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- ===== MODALS ===== -->
+<div id="printModal" class="modal no-print">
+    <div class="modal-content">
+        <h4>Select Paper Size</h4>
+        <select id="pageSize" style="width:100%; padding:10px; margin-bottom:10px;">
+            <option value="A4" selected>Standard A4</option>
+            <option value="A5">Small A5</option>
+            <option value="Legal">Legal Size</option>
+            <option value="80mm">Thermal Receipt (80mm)</option>
+            <option value="custom">Custom Size</option>
+        </select>
+        <div id="customDims" style="display:none; margin-bottom:10px;">
+            Width (mm): <input type="number" id="custW" value="210" style="border:1px solid #ccc; width:60px;">
+        </div>
+        <button class="btn btn-print" onclick="applyPrint()" style="width:100%;">Print Now</button>
+        <button onclick="document.getElementById('printModal').style.display='none'" style="width:100%; margin-top:10px; background:none; border:none; color:red; cursor:pointer;">Cancel</button>
+    </div>
+</div>
+
+<div id="devModal" class="modal no-print">
+    <div class="modal-content" style="text-align: center;">
+        <h3 style="color: var(--primary); margin-bottom: 5px;">Wasi Developers</h3>
+        <p style="font-size: 14px; color: #555;">Professional Software & Web Engineering Solutions</p>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+        <p style="font-weight: bold;">Contact for Custom Projects:</p>
+        <a id="modal-wa-link" href="#" style="background:#27ae60; color:white; padding:12px 20px; text-decoration:none; border-radius:6px; font-weight:bold; display:inline-block; margin-top:5px;">
+            WhatsApp Support
+        </a>
+        <button onclick="document.getElementById('devModal').style.display='none'" style="width:100%; margin-top:20px; background:none; border:none; color:#777; cursor:pointer; font-weight:bold;">Close</button>
+    </div>
+</div>
+
+<!-- ===== PWA INSTALL BANNER ===== -->
+<div id="pwa-install-btn" style="display: none; background: #ffffff; color: #2c3e50; padding: 12px 20px; text-align: center; font-family: sans-serif; position: fixed; top: 0; left: 0; right: 0; z-index: 9999; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border-bottom: 2px solid #27ae60; align-items: center; justify-content: center; gap: 10px;">
+    <span style="font-size: 13px; font-weight: 600;"> Install App for better experience!</span>
+    <button id="pwa-actual-install-click" style="background: #27ae60; color: white; border: none; padding: 6px 16px; border-radius: 20px; font-weight: bold; cursor: pointer;">Install</button>
+    <button onclick="document.getElementById('pwa-install-btn').style.display='none'" style="background: transparent; border: none; font-size: 18px; cursor: pointer; color: #888;">&times;</button>
+</div>
+
+
+<!-- Automatic Update Popup System Script -->
+<script src="update.js"></script>
+
+<!-- Delete karney ka button-->
+<script src="bills-history-actions.js"></script>
+<!-- Edit karney ka button-->
+<script src="bills-edit-actions.js"></script>
+<!-- Bills History Download karney ka button-->
+<script src="bills-download-actions.js"></script>
+
+<!-- ✅ JS FILE LINK -->
+<script src="script.js"></script>
+
+<!-- 🆕 NEW BILL ORDER SYSTEM — HAMESHA script.js ke BAAD! (AKHRI SCRIPT) -->
+<script src="new-bill-order.js"></script>
+</body>
+</html>
