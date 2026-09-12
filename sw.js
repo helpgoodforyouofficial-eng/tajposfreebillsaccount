@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bill-gen-v19'; //  v18  v19
+const CACHE_NAME = 'bill-gen-v20'; // 🆕 v29 (fail-safe install)
 const ASSETS = [
   './',
   './index.html',
@@ -9,7 +9,7 @@ const ASSETS = [
   './bills-history-actions.js',
   './bills-edit-actions.js',
   './bills-download-actions.js',
-  './new-bill-order.js',           // 🆕 New Bill Order system
+  './new-bill-order.js',
   './icon-192.png',
   './icon-512.png',
   'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
@@ -19,12 +19,18 @@ const ASSETS = [
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
 
-
-// 1. Cache assets on install
+// 1. 🛡️ FAIL-SAFE INSTALL:
+// Ek file missing ho to SIRF wo skip hogi — poora cache NAHI tootega!
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
+      return Promise.all(
+        ASSETS.map(url => 
+          cache.add(url).catch(err => {
+            console.warn('⚠️ Cache skip (file missing?):', url);
+          })
+        )
+      );
     }).then(() => self.skipWaiting())
   );
 });
@@ -45,7 +51,7 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-// 3. Network first, fallback to cache (Online = fresh, Offline = cache)
+// 3. Network first, fallback to cache
 self.addEventListener('fetch', (e) => {
   e.respondWith(
     fetch(e.request).catch(() => {
@@ -53,5 +59,3 @@ self.addEventListener('fetch', (e) => {
     })
   );
 });
-
-
