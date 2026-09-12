@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bill-gen-v20'; // 🆕 v29 (fail-safe install)
+const CACHE_NAME = 'bill-gen-v21'; // 🆕 v29 (fail-safe install)
 const ASSETS = [
   './',
   './index.html',
